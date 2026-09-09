@@ -1,0 +1,126 @@
+[ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 1; @symbol_importdef<0> = [Toybox,1,7,13]; @symbol_importdef<1> = [Lang,1,14,18]; ]
+import Toybox.Lang;
+[ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 2; @symbol_importdef<0> = [Toybox,2,7,13]; @symbol_importdef<1> = [System,2,14,20]; ]
+import Toybox.System;
+[ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 3; @symbol_importdef<0> = [Toybox,3,7,13]; @symbol_importdef<1> = [WatchUi,3,14,21]; ]
+import Toybox.WatchUi;
+[ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 5; @symbol_classdef = [SimpScoreMenuDelegate,5,6,27]; @symbol_extends<0> = [WatchUi,5,36,43]; @symbol_extends<1> = [MenuInputDelegate,5,44,61]; ]
+class SimpScoreMenuDelegate extends WatchUi.MenuInputDelegate {
+    [ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 5; ]
+    <init> {
+    }
+    [ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 5; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 6; @position = 14; @symbol_vardef = [_data,6,14,19]; @symbol_type<0> = [SimpScoreData,6,23,36]; ]
+    private
+    var _data as SimpScoreData;
+    [ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 8; @symbol_functiondef = [initialize,8,11,21]; @symbol_param<0> = [data,8,22,26]; @symbol_param<0>_type<0> = [SimpScoreData,8,30,43]; ]
+    function initialize(data as SimpScoreData) as Void {
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_8_45_12_2_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 9 4 ]
+        symbol [ self %self 9 4 8 ];
+        %tmp.1 = lgetv %data;
+        symbol [ data %tmp.1 9 17 21 ];
+        symbol [ _data ? 9 9 14 ];
+        putv self :_data %tmp.1;
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 11 4 ]
+        symbol [ MenuInputDelegate %tmp.3 11 4 21 ];
+        %tmp.3 = getv ? :MenuInputDelegate;
+        symbol [ initialize %tmp.4 11 22 32 ];
+        %tmp.4 = getv function %tmp.3 :initialize;
+        invoke %tmp.3 %tmp.4();
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_8_45_12_2_stop:
+    }
+    [ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 14; @symbol_functiondef = [onMenuItem,14,11,21]; @symbol_param<0> = [item,14,22,26]; @symbol_param<0>_type<0> = [Symbol,14,30,36]; ]
+    function onMenuItem(item as Symbol) as Void {
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_14_46_24_2_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 15 4 ]
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_stmt:
+        %tmp.1 = lgetv %item;
+        symbol [ item %tmp.1 15 8 12 ];
+        %tmp.3 = const :item_1;
+        symbol [ item_1 %tmp.3 15 17 23 const ];
+        %tmp.4 = eq %tmp.1 %tmp.3;
+        bf %tmp.4 @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_false;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_true:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_25_17_4_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 16 6 ]
+        symbol [ _data %tmp.6 16 6 11 ];
+        %tmp.6 = getv ? :_data;
+        symbol [ reset %tmp.7 16 12 17 ];
+        %tmp.7 = getv function %tmp.6 :reset;
+        invoke %tmp.6 %tmp.7();
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_25_17_4_stop:
+        goto @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_end;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_false:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 17 11 ]
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_stmt:
+        %tmp.8 = lgetv %item;
+        symbol [ item %tmp.8 17 15 19 ];
+        %tmp.10 = const :item_2;
+        symbol [ item_2 %tmp.10 17 24 30 const ];
+        %tmp.11 = eq %tmp.8 %tmp.10;
+        bf %tmp.11 @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_false;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_true:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_32_19_4_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 18 6 ]
+        symbol [ _data %tmp.13 18 6 11 ];
+        %tmp.13 = getv ? :_data;
+        symbol [ setWinAt %tmp.14 18 12 20 ];
+        %tmp.14 = getv function %tmp.13 :setWinAt;
+        %tmp.15 = 7;
+        invoke %tmp.13 %tmp.14(%tmp.15);
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_32_19_4_stop:
+        goto @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_end;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_false:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 19 11 ]
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_stmt:
+        %tmp.16 = lgetv %item;
+        symbol [ item %tmp.16 19 15 19 ];
+        %tmp.18 = const :item_3;
+        symbol [ item_3 %tmp.18 19 24 30 const ];
+        %tmp.19 = eq %tmp.16 %tmp.18;
+        bf %tmp.19 @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_false;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_true:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_32_21_4_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 20 6 ]
+        symbol [ _data %tmp.21 20 6 11 ];
+        %tmp.21 = getv ? :_data;
+        symbol [ setWinAt %tmp.22 20 12 20 ];
+        %tmp.22 = getv function %tmp.21 :setWinAt;
+        %tmp.23 = 11;
+        invoke %tmp.21 %tmp.22(%tmp.23);
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_32_21_4_stop:
+        goto @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_end;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_false:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 21 11 ]
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_11_23_4_if_stmt:
+        %tmp.24 = lgetv %item;
+        symbol [ item %tmp.24 21 15 19 ];
+        %tmp.26 = const :item_4;
+        symbol [ item_4 %tmp.26 21 24 30 const ];
+        %tmp.27 = eq %tmp.24 %tmp.26;
+        bf %tmp.27 @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_11_23_4_if_end;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_11_23_4_if_true:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_32_23_4_start:
+[ "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc" 22 6 ]
+        symbol [ _data %tmp.29 22 6 11 ];
+        %tmp.29 = getv ? :_data;
+        symbol [ setWinAt %tmp.30 22 12 20 ];
+        %tmp.30 = getv function %tmp.29 :setWinAt;
+        %tmp.31 = 21;
+        invoke %tmp.29 %tmp.30(%tmp.31);
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_32_23_4_stop:
+        goto @_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_11_23_4_if_end;
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_21_11_23_4_if_end:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_19_11_23_4_if_end:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_17_11_23_4_if_end:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_15_4_23_4_if_end:
+_workspaces_SimpScore_source_SimpScoreMenuDelegate_mc_14_46_24_2_stop:
+    }
+}
+[ @file = "/workspaces/SimpScore/source/SimpScoreMenuDelegate.mc"; @line = 1; ]
+<init> {
+}

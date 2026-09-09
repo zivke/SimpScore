@@ -1,0 +1,10 @@
+<strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <string id="AppName">SimpScore</string>
+
+    <string id="menu_label_1">New Game</string>
+    <string
+        id="menu_label_2">Win at 7</string>
+    <string id="menu_label_3">Win at 11</string>
+    <string id="menu_label_4">Win at 21</string>
+</strings>
