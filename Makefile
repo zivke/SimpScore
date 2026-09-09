@@ -6,6 +6,7 @@
 
 DEVICE      ?= instinct2
 KEY         ?= $(HOME)/.ciq/developer_key.der
+TYPECHECK   ?= 3
 JUNGLE      ?= monkey.jungle
 TEST_JUNGLE ?= monkey-test.jungle
 APP         ?= SimpScore
@@ -23,11 +24,11 @@ CONNECTIQ_LOG := /tmp/$(APP)-connectiq.log
 
 ## build: compile a debug .prg for $(DEVICE)
 build: | $(BIN)
-	monkeyc -f $(JUNGLE) -o $(PRG) -y $(KEY) -d $(DEVICE) -w
+	monkeyc -f $(JUNGLE) -o $(PRG) -y $(KEY) -d $(DEVICE) -w -l $(TYPECHECK)
 
 ## release: compile a release .prg (debug info stripped) for $(DEVICE)
 release: | $(BIN)
-	monkeyc -f $(JUNGLE) -o $(PRG) -y $(KEY) -d $(DEVICE) -w -r
+	monkeyc -f $(JUNGLE) -o $(PRG) -y $(KEY) -d $(DEVICE) -w -r -l $(TYPECHECK)
 
 ## sim: start the Connect IQ simulator if it is not already running
 sim:
@@ -47,14 +48,14 @@ run: sim build
 # monkeydo exits non-zero even when tests pass, so key the result off the
 # runner's summary line instead.
 test: sim | $(BIN)
-	monkeyc -f $(TEST_JUNGLE) -o $(TEST_PRG) -y $(KEY) -d $(DEVICE) -t -w
+	monkeyc -f $(TEST_JUNGLE) -o $(TEST_PRG) -y $(KEY) -d $(DEVICE) -t -w -l $(TYPECHECK)
 	@out=$$(monkeydo $(TEST_PRG) $(DEVICE) -t 2>&1); \
 	echo "$$out"; \
 	echo "$$out" | grep -q '^PASSED' || { echo ">> tests did not pass"; exit 1; }
 
 ## package: build the store .iq (run `make all-devices` first)
 package:
-	monkeyc -e -f $(JUNGLE) -o $(IQ) -y $(KEY) -w -r
+	monkeyc -e -f $(JUNGLE) -o $(IQ) -y $(KEY) -w -r -l $(TYPECHECK)
 
 ## dev-device: download just $(DEVICE)'s simulator files
 dev-device:

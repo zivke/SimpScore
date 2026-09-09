@@ -42,7 +42,7 @@ class SimpScoreData {
   function persist() as Void {
     Storage.setValue(STORAGE_HOME, _homeScore);
     Storage.setValue(STORAGE_AWAY, _awayScore);
-    Storage.setValue(STORAGE_ACTIONS, _actions as Array<Number>);
+    Storage.setValue(STORAGE_ACTIONS, _actions as Array<Storage.ValueType>);
     Storage.setValue(STORAGE_WIN_AT, _winAt == null ? 0 : _winAt);
     Storage.setValue(STORAGE_WIN_BY_2, _winBy2);
   }
