@@ -16,7 +16,7 @@ yet released, so everything currently lives under Unreleased.
   centred on every other watch.
 - Win Score opens a two-digit picker (tens + ones wheels); 00 = off. When a
   win score is set the watch buzzes on a win; when off, play continues
-  indefinitely. The picker is black-on-white to match the score screen.
+  indefinitely.
 - "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it
   off for first-to-the-win-score. Toggling the rule redraws the score screen
   right away, so it can win or reopen the current game immediately.

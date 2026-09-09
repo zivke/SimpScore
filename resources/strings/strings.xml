@@ -15,9 +15,6 @@
     <string id="menu_win_score_off">Off</string>
     <string id="menu_win_by_2">Win by 2</string>
 
-    <!-- Confirm marker on the win-score picker's last wheel. -->
-    <string id="picker_confirm">OK</string>
-
     <!-- Shown in the target circle on the score screen when no win score is set. -->
     <string id="win_score_off_indicator">-</string>
 </strings>

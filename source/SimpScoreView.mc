@@ -50,22 +50,19 @@ class SimpScoreView extends WatchUi.View {
       }
     }
 
-    // Set the Home score value
+    // Set the Home score value. "%d" (not "%2d"): the labels are centre-
+    // justified, and a padding space left a stray mark next to 1-digit scores.
     var homeScoreValueLabel =
       View.findDrawableById("HomeScoreValueLabel") as Text?;
     if (homeScoreValueLabel != null) {
-      homeScoreValueLabel.setText(
-        _data.getHomeScore().format("%2d").toString()
-      );
+      homeScoreValueLabel.setText(_data.getHomeScore().format("%d").toString());
     }
 
     // Set the Away score value
     var awayScoreValueLabel =
       View.findDrawableById("AwayScoreValueLabel") as Text?;
     if (awayScoreValueLabel != null) {
-      awayScoreValueLabel.setText(
-        _data.getAwayScore().format("%2d").toString()
-      );
+      awayScoreValueLabel.setText(_data.getAwayScore().format("%d").toString());
     }
 
     // Call the parent onUpdate function to redraw the layout

@@ -30,19 +30,18 @@ function titleInset() as Number {
   return System.getDeviceSettings().screenWidth * 6 / 100;
 }
 
-// Horizontal anchor + justification for a menu / picker title. Menu2 anchors
-// the title's left edge at locX and ignores justification, so centring uses
-// the LAYOUT_HALIGN_CENTER sentinel rather than a pixel position.
-function titleLocX() as Number {
-  return centreTitles()
-    ? WatchUi.LAYOUT_HALIGN_CENTER
-    : titleInset();
-}
-
-function titleJustification() as Graphics.TextJustification {
-  return centreTitles()
-    ? Graphics.TEXT_JUSTIFY_CENTER
-    : Graphics.TEXT_JUSTIFY_LEFT;
+// A left-inset Text drawable for a menu / picker title on Instinct, where the
+// score screen is left-of-centre too (to clear the sub-screen). Used only when
+// centreTitles() is false.
+function insetTitle(text as String, color as Graphics.ColorType) as WatchUi.Text {
+  return new WatchUi.Text({
+    :text => text,
+    :color => color,
+    :font => Graphics.FONT_TINY,
+    :justification => Graphics.TEXT_JUSTIFY_LEFT,
+    :locX => titleInset(),
+    :locY => WatchUi.LAYOUT_VALIGN_CENTER,
+  });
 }
 
 function winScoreSubLabel(winAt as Number?) as String {
@@ -53,20 +52,14 @@ function winScoreSubLabel(winAt as Number?) as String {
 }
 
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
-  // The app name as the title, via a Text drawable (a plain string title
-  // wraps mid-word in the narrow Menu2 title area). Left-inset on Instinct,
-  // centred elsewhere. :icon is also set for the sub-window on devices that
-  // use it.
-  var title = new WatchUi.Text({
-    :text => menuString(Rez.Strings.AppName),
-    :color => Graphics.COLOR_WHITE,
-    :font => Graphics.FONT_SMALL,
-    :justification => titleJustification(),
-    :locX => titleLocX(),
-    :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-  });
+  // Round / rectangular Menu2 centres a plain-string title itself; Instinct's
+  // narrow title area needs a left-inset Text drawable to clear the sub-screen
+  // (and a bare string wraps mid-word there). :icon is also set for the
+  // sub-window on devices that use it.
   var menu = new WatchUi.Menu2({
-    :title => title,
+    :title => centreTitles()
+      ? menuString(Rez.Strings.AppName)
+      : insetTitle(menuString(Rez.Strings.AppName), Graphics.COLOR_WHITE),
     :icon => Rez.Drawables.LauncherIcon,
   });
   menu.addItem(
@@ -96,61 +89,26 @@ function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
   var current = data.getWinAt();
   var value = (current == null) ? 0 : current;
 
-  var title = new WatchUi.Text({
-    :text => menuString(Rez.Strings.menu_win_score),
-    :color => Graphics.COLOR_BLACK,
-    :font => Graphics.FONT_TINY,
-    :justification => titleJustification(),
-    :locX => titleLocX(),
-    :locY => WatchUi.LAYOUT_VALIGN_BOTTOM,
-  });
+  // Stock WatchUi.Picker (white-on-dark). An earlier black-on-white version
+  // could not clear its own background consistently across firmware, so the
+  // picker keeps the system look; only the title position tracks the menu.
+  var title = centreTitles()
+    ? new WatchUi.Text({
+        :text => menuString(Rez.Strings.menu_win_score),
+        :color => Graphics.COLOR_WHITE,
+        :font => Graphics.FONT_TINY,
+        :justification => Graphics.TEXT_JUSTIFY_CENTER,
+        :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+        :locY => WatchUi.LAYOUT_VALIGN_BOTTOM,
+      })
+    : insetTitle(menuString(Rez.Strings.menu_win_score), Graphics.COLOR_WHITE);
 
-  return new WinScorePicker({
+  return new WatchUi.Picker({
     :title => title,
     :pattern =>
       [new DigitPickerFactory(), new DigitPickerFactory()] as Array<WatchUi.PickerFactory>,
     :defaults => [value / 10, value % 10] as Array<Number>,
-    // Picker's built-in arrows and confirm mark are white; override them so
-    // they show on the white background too.
-    :previousArrow => pickerArrow(Rez.Drawables.PickerArrowDown),
-    :nextArrow => pickerArrow(Rez.Drawables.PickerArrowUp),
-    :confirm => new WatchUi.Text({
-      :text => menuString(Rez.Strings.picker_confirm),
-      :color => Graphics.COLOR_BLACK,
-      :font => Graphics.FONT_MEDIUM,
-      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-    }),
   });
-}
-
-// A centred black arrow bitmap for one of the Picker's scroll slots.
-function pickerArrow(rezId as ResourceId) as WatchUi.Bitmap {
-  return new WatchUi.Bitmap({
-    :rezId => rezId,
-    :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-    :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-  });
-}
-
-// Black-on-white to match the score screen; WatchUi.Picker is dark by default.
-class WinScorePicker extends WatchUi.Picker {
-  function initialize(options as {
-    :title as WatchUi.Drawable,
-    :pattern as Array<WatchUi.PickerFactory>,
-    :defaults as Array<Number>,
-    :previousArrow as WatchUi.Drawable,
-    :nextArrow as WatchUi.Drawable,
-    :confirm as WatchUi.Drawable,
-  }) {
-    Picker.initialize(options);
-  }
-
-  function onUpdate(dc as Graphics.Dc) as Void {
-    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-    dc.clear();
-    Picker.onUpdate(dc);
-  }
 }
 
 // One 0-9 wheel. Two of these make the two-digit win-score picker.
@@ -170,7 +128,7 @@ class DigitPickerFactory extends WatchUi.PickerFactory {
   function getDrawable(index as Number, isSelected as Boolean) as Drawable? {
     return new WatchUi.Text({
       :text => index.toString(),
-      :color => Graphics.COLOR_BLACK,
+      :color => Graphics.COLOR_WHITE,
       :font => Graphics.FONT_NUMBER_MEDIUM,
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
       :locY => WatchUi.LAYOUT_VALIGN_CENTER,

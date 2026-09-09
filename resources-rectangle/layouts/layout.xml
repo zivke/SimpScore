@@ -23,14 +23,14 @@
                 font="Graphics.FONT_TINY" color="Graphics.COLOR_BLACK"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
             <label id="HomeScoreValueLabel" text="00" x="24%" y="66%"
-                font="Graphics.FONT_NUMBER_HOT" color="Graphics.COLOR_BLACK"
+                font="Graphics.FONT_NUMBER_MEDIUM" color="Graphics.COLOR_BLACK"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 
             <label id="AwayScoreTextLabel" text="@Strings.label_away" x="76%" y="46%"
                 font="Graphics.FONT_TINY" color="Graphics.COLOR_BLACK"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
             <label id="AwayScoreValueLabel" text="00" x="76%" y="66%"
-                font="Graphics.FONT_NUMBER_HOT" color="Graphics.COLOR_BLACK"
+                font="Graphics.FONT_NUMBER_MEDIUM" color="Graphics.COLOR_BLACK"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
         </layout>
     </layouts>
