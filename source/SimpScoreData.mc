@@ -98,27 +98,32 @@ class SimpScoreData {
     return self._awayScore;
   }
 
-  function addHomePoint() as Void {
+  // The three mutators return whether they actually changed anything, so the
+  // input delegates can skip a redundant persist() on a no-op press (a point
+  // after the game is won, an undo with empty history).
+  function addHomePoint() as Boolean {
     if (checkWin()) {
-      return;
+      return false;
     }
 
     self._homeScore += 1;
     self._actions.add(HOME_POINT);
+    return true;
   }
 
-  function addAwayPoint() as Void {
+  function addAwayPoint() as Boolean {
     if (checkWin()) {
-      return;
+      return false;
     }
 
     self._awayScore += 1;
     self._actions.add(AWAY_POINT);
+    return true;
   }
 
-  function undoLastAction() as Void {
+  function undoLastAction() as Boolean {
     if (self._actions.size() == 0) {
-      return;
+      return false;
     }
 
     var lastAction = self._actions[_actions.size() - 1];
@@ -129,6 +134,7 @@ class SimpScoreData {
     }
 
     _actions = _actions.slice(0, _actions.size() - 1);
+    return true;
   }
 
   function checkWin() as Boolean {

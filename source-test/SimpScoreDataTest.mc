@@ -60,6 +60,20 @@ function pointsAreIgnoredAfterWin(logger as Test.Logger) as Boolean {
 }
 
 (:test)
+function mutatorsReportWhetherTheyChangedAnything(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(2);
+  if (!data.addHomePoint()) { return false; } // 1-0, scored
+  if (!data.addHomePoint()) { return false; } // 2-0, scored -> won
+  if (data.addHomePoint()) { return false; }  // ignored after win
+  if (data.addAwayPoint()) { return false; }  // ignored after win
+  if (!data.undoLastAction()) { return false; } // 1-0, undid a point
+  if (!data.undoLastAction()) { return false; } // 0-0, undid a point
+  if (data.undoLastAction()) { return false; }  // history empty
+  return true;
+}
+
+(:test)
 function resetClearsScoreAndHistory(logger as Test.Logger) as Boolean {
   var data = new SimpScoreData();
   data.addHomePoint();
