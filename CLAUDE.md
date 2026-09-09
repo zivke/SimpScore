@@ -31,9 +31,11 @@ Never install or regenerate them. Everything goes through the `Makefile`
   on success, so the target keys pass/fail off the runner's `PASSED` line.
 - `make package` — store `.iq`; needs `make all-devices` first.
 - Underneath, a build is just
-  `monkeyc -f monkey.jungle -o bin/SimpScore.prg -y ~/.ciq/developer_key.der -d instinct2 -w`.
-- Type checking is **Strict** (`monkeyC.typeCheckLevel`): annotate every
-  parameter and return, matching the existing code.
+  `monkeyc -f monkey.jungle -o bin/SimpScore.prg -y ~/.ciq/developer_key.der -d instinct2 -w -l 3`.
+- Type checking is **Strict** (`monkeyC.typeCheckLevel`, and `-l 3` /
+  `TYPECHECK` on every `monkeyc` line in the `Makefile`): annotate every
+  parameter and return, matching the existing code. Constructors are the
+  exception — `monkeyc` rejects a return annotation on `initialize()`.
 
 `.devcontainer/README.md` covers one-time SDK setup (`connect-iq-sdk-manager …`).
 
@@ -50,21 +52,25 @@ and both delegates. Delegates mutate the model and call
   `HOME_POINT` / `AWAY_POINT` that `undoLastAction()` pops. `checkWin()` is
   false when `_winAt` is `null`; otherwise a side must reach `_winAt`, plus —
   when `_winBy2` — lead by more than one point. `addHomePoint` / `addAwayPoint`
-  become no-ops after a win. `reset()` re-runs `initialize()` (which leaves the
-  settings alone). `persist()` / `restore()` move the five fields to/from
+  become no-ops after a win. The three mutators (`addHomePoint`, `addAwayPoint`,
+  `undoLastAction`) return a `Boolean` — whether they actually changed anything
+  — so the delegates can skip a redundant `persist()` on a no-op press.
+  `reset()` re-runs `initialize()` (which leaves the settings alone). `persist()` / `restore()` move the five fields to/from
   `Application.Storage` (win score as `0` = off); they are **only** called from
   the app lifecycle and the delegates, never from this class's own mutators, so
   `SimpScoreData` unit tests stay Storage-free.
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
   previous-page = home point, next-page = away point, select = undo, menu =
   push the main menu (`buildMainMenu`). Calls `_data.persist()` after each
-  change (write-through) and `Attention.vibrate` when a point wins.
+  change that mutated the model (write-through) and `Attention.vibrate` when a
+  point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
-  code, no title): "New Game", "Win Score" (sub-label = value or "Off"), and a
-  "Win by 2" `ToggleMenuItem`. Selecting "Win Score" pushes a two-column
-  `WatchUi.Picker` of `DigitPickerFactory` wheels (tens, ones); on accept,
-  `WinScorePickerDelegate` computes `tens*10 + ones` (`0` → `null`) and updates
-  the sub-label in place. `menuString` / `winScoreSubLabel` / `buildMainMenu` /
+  code, titled with the app name via a left-inset `Text` drawable): "New Game",
+  "Win Score" (sub-label = value or "Off"), and a "Win by 2" `ToggleMenuItem`.
+  Selecting "Win Score" pushes a two-column `WatchUi.Picker` of
+  `DigitPickerFactory` wheels (tens, ones); on accept, `WinScorePickerDelegate`
+  computes `tens*10 + ones` (`0` → `null`) and updates the sub-label in place.
+  `menuString` / `titleInset` / `winScoreSubLabel` / `buildMainMenu` /
   `buildWinScorePicker` are file-scope helpers.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
