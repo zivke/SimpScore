@@ -13,9 +13,7 @@ two sides, **home** and **away**, for sports or simple games:
   continue indefinitely
 - new-game / reset
 - a single score screen plus an options menu
-
-Planned but not yet built: persisting the win score across app restarts (it
-resets to 7).
+- score, undo history and win score survive leaving and reopening the app
 
 ## Build & run
 
@@ -42,6 +40,7 @@ Never install or regenerate them. Everything goes through the `Makefile`
 `SimpScoreApp` creates one `SimpScoreData` model and injects it into the view
 and both delegates. Delegates mutate the model and call
 `WatchUi.requestUpdate()`; the view reads the model back on `onUpdate`.
+`SimpScoreApp.onStart` restores persisted state and `onStop` saves it.
 
 - **`source/SimpScoreData.mc`** — the model, no UI. Holds `_homeScore`,
   `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score) and
@@ -49,10 +48,14 @@ and both delegates. Delegates mutate the model and call
   `undoLastAction()` pops. `checkWin()` is false when `_winAt` is `null`,
   otherwise true once a side reaches `_winAt` *and* leads by more than one
   point; `addHomePoint` / `addAwayPoint` become no-ops after a win. `reset()`
-  re-runs `initialize()` (which leaves `_winAt` alone).
+  re-runs `initialize()` (which leaves `_winAt` alone). `persist()` / `restore()`
+  move the four fields to/from `Application.Storage` (win score as `0` = off);
+  they are **only** called from the app lifecycle and the delegates, never from
+  this class's own mutators, so `SimpScoreData` unit tests stay Storage-free.
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
   previous-page = home point, next-page = away point, select = undo, menu =
-  push the main menu (`buildMainMenu`). Calls `Attention.vibrate` when a point wins.
+  push the main menu (`buildMainMenu`). Calls `_data.persist()` after each
+  change (write-through) and `Attention.vibrate` when a point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
   code): "New Game" and "Win Score" (sub-label = current value or "Off").
   Selecting "Win Score" pushes a `WatchUi.Picker` number spinner
@@ -87,5 +90,7 @@ and both delegates. Delegates mutate the model and call
 - Update `changelog.md` (Keep a Changelog, everything under Unreleased until
   the first store release) for any user-visible change; update `README.md`'s
   supported-devices list when products change.
-- `SimpScoreData` is pure logic — add a `(:test)` case in
-  `source-test/SimpScoreDataTest.mc` when you change scoring, undo, or win rules.
+- `SimpScoreData` is pure logic apart from the explicit `persist()` / `restore()`
+  methods — don't call `Storage` from its mutators, so the tests stay isolated.
+  Add a `(:test)` case in `source-test/SimpScoreDataTest.mc` when you change
+  scoring, undo, win, or persistence rules.

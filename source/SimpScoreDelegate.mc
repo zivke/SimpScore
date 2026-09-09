@@ -21,6 +21,7 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
 
   function onPreviousPage() as Boolean {
     _data.addHomePoint();
+    _data.persist();
     WatchUi.requestUpdate();
     if (_data.checkWin()) {
       vibrate();
@@ -30,6 +31,7 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
 
   function onNextPage() as Boolean {
     _data.addAwayPoint();
+    _data.persist();
     WatchUi.requestUpdate();
     if (_data.checkWin()) {
       vibrate();
@@ -39,6 +41,7 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
 
   function onSelect() as Boolean {
     _data.undoLastAction();
+    _data.persist();
     WatchUi.requestUpdate();
     return true;
   }

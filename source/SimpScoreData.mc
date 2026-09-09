@@ -1,6 +1,11 @@
-import Toybox.Application;
+import Toybox.Application.Storage;
 import Toybox.Lang;
-import Toybox.System;
+
+// Storage keys for persist()/restore().
+const STORAGE_HOME = "homeScore";
+const STORAGE_AWAY = "awayScore";
+const STORAGE_ACTIONS = "actions";
+const STORAGE_WIN_AT = "winAt";
 
 class SimpScoreData {
   enum Action {
@@ -24,6 +29,38 @@ class SimpScoreData {
 
   function reset() as Void {
     initialize();
+  }
+
+  // Persistence. Deliberately not called by this class's own mutators: the app
+  // lifecycle (onStart/onStop) and the input delegates drive it, so unit tests
+  // that exercise the model never touch Storage. Win score persists as 0 = off.
+  function persist() as Void {
+    Storage.setValue(STORAGE_HOME, _homeScore);
+    Storage.setValue(STORAGE_AWAY, _awayScore);
+    Storage.setValue(STORAGE_ACTIONS, _actions as Array<Number>);
+    Storage.setValue(STORAGE_WIN_AT, _winAt == null ? 0 : _winAt);
+  }
+
+  function restore() as Void {
+    var home = Storage.getValue(STORAGE_HOME);
+    if (home instanceof Number) {
+      _homeScore = home;
+    }
+
+    var away = Storage.getValue(STORAGE_AWAY);
+    if (away instanceof Number) {
+      _awayScore = away;
+    }
+
+    var actions = Storage.getValue(STORAGE_ACTIONS);
+    if (actions instanceof Array) {
+      _actions = actions as Array<Action>;
+    }
+
+    var winAt = Storage.getValue(STORAGE_WIN_AT);
+    if (winAt instanceof Number) {
+      _winAt = (winAt == 0) ? null : winAt;
+    }
   }
 
   function getWinAt() as Number? {

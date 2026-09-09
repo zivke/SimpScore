@@ -5,10 +5,11 @@ board games, anything with a **home** and an **away** side.
 
 - one button per side, one point at a time
 - undo the last point (full history, not just the last one)
-- optional target score ("win at"); reaching it with a two-point margin ends
-  the game and buzzes the watch
+- optional win score, set with a number picker (0 = off); reaching it with a
+  two-point margin ends the game and buzzes the watch
 - new game / reset from the options menu
 - one score screen, one menu
+- score, history and win score are kept when you leave and reopen the app
 
 ## Controls
 

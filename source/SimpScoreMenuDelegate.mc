@@ -100,6 +100,7 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
     var id = item.getId();
     if (id == :new_game) {
       _data.reset();
+      _data.persist();
       WatchUi.popView(WatchUi.SLIDE_DOWN);
       WatchUi.requestUpdate();
     } else if (id == :win_score) {
@@ -125,6 +126,7 @@ class WinScorePickerDelegate extends WatchUi.PickerDelegate {
   function onAccept(values as Array) as Boolean {
     var value = values[0] as Number?;
     _data.setWinAt((value == null || value == 0) ? null : value);
+    _data.persist();
     _winScoreItem.setSubLabel(winScoreSubLabel(_data.getWinAt()));
     WatchUi.popView(WatchUi.SLIDE_DOWN);
     WatchUi.requestUpdate();

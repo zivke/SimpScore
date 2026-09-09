@@ -1,3 +1,4 @@
+import Toybox.Application.Storage;
 import Toybox.Lang;
 import Toybox.Test;
 
@@ -93,4 +94,46 @@ function winScoreTogglesOffAndBackOn(logger as Test.Logger) as Boolean {
   if (data.getWinAt() != null) { return false; }
   data.setWinAt(11);
   return data.getWinAt() == 11;
+}
+
+function clearPersisted() as Void {
+  Storage.deleteValue(STORAGE_HOME);
+  Storage.deleteValue(STORAGE_AWAY);
+  Storage.deleteValue(STORAGE_ACTIONS);
+  Storage.deleteValue(STORAGE_WIN_AT);
+}
+
+(:test)
+function persistRestoresScoreHistoryAndWinScore(logger as Test.Logger) as Boolean {
+  clearPersisted();
+  var a = new SimpScoreData();
+  a.setWinAt(15);
+  a.addHomePoint();
+  a.addHomePoint();
+  a.addAwayPoint();
+  a.persist();
+
+  var b = new SimpScoreData();
+  b.restore();
+  var ok = b.getHomeScore() == 2 && b.getAwayScore() == 1 && b.getWinAt() == 15;
+  b.undoLastAction(); // restored history: drops the last (away) point
+  ok = ok && b.getHomeScore() == 2 && b.getAwayScore() == 0;
+
+  clearPersisted();
+  return ok;
+}
+
+(:test)
+function persistRoundTripsWinScoreOff(logger as Test.Logger) as Boolean {
+  clearPersisted();
+  var a = new SimpScoreData();
+  a.setWinAt(null);
+  a.persist();
+
+  var b = new SimpScoreData();
+  b.restore();
+  var ok = b.getWinAt() == null;
+
+  clearPersisted();
+  return ok;
 }

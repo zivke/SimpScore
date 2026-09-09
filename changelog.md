@@ -15,4 +15,6 @@ yet released, so everything currently lives under Unreleased.
   (0 = off, up to 99). With a win score set, a side wins on reaching it with a
   two-point margin and the watch buzzes; with it off, play continues
   indefinitely.
+- The score, undo history and win score are saved and restored when you leave
+  and reopen the app.
 - Instinct 2 support.

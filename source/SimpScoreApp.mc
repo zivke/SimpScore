@@ -13,10 +13,12 @@ class SimpScoreApp extends Application.AppBase {
 
   // onStart() is called on application start up
   function onStart(state as Dictionary?) as Void {
+    _data.restore();
   }
 
   // onStop() is called when your application is exiting
   function onStop(state as Dictionary?) as Void {
+    _data.persist();
   }
 
   // Return the initial view of your application here
