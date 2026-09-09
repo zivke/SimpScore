@@ -10,10 +10,10 @@
             <drawable id="backdrop" />
 
             <bitmap id="ClockIcon" x="38" y="6"
-				filename="custom_clock_15px_wht_bo_bkgnd.png" />
-			<label id="ClockLabel" text="XX:XX" x="45%" y="12" color="Graphics.COLOR_WHITE"
-				font="Graphics.FONT_XTINY"
-				justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+                filename="custom_clock_15px_wht_bo_bkgnd.png" />
+            <label id="ClockLabel" text="XX:XX" x="45%" y="12" color="Graphics.COLOR_WHITE"
+                font="Graphics.FONT_XTINY"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 
             <label id="ScoreToWinValueLabel" text="21" x="144" y="31"
                 font="Graphics.FONT_NUMBER_MILD"
