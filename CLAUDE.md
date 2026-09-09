@@ -65,13 +65,18 @@ and both delegates. Delegates mutate the model and call
   change that mutated the model (write-through) and `Attention.vibrate` when a
   point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
-  code, titled with the app name via a left-inset `Text` drawable): "New Game",
-  "Win Score" (sub-label = value or "Off"), and a "Win by 2" `ToggleMenuItem`.
-  Selecting "Win Score" pushes a two-column `WatchUi.Picker` of
-  `DigitPickerFactory` wheels (tens, ones); on accept, `WinScorePickerDelegate`
+  code, titled with the app name via a `Text` drawable — left-inset on the
+  Instinct semi-octagons to clear the sub-screen, centred everywhere else):
+  "New Game", "Win Score" (sub-label = value or "Off"), and a "Win by 2"
+  `ToggleMenuItem`. Selecting "Win Score" pushes a two-column `WatchUi.Picker`
+  of `DigitPickerFactory` wheels (tens, ones); on accept, `WinScorePickerDelegate`
   computes `tens*10 + ones` (`0` → `null`) and updates the sub-label in place.
-  `menuString` / `titleInset` / `winScoreSubLabel` / `buildMainMenu` /
-  `buildWinScorePicker` are file-scope helpers.
+  `WinScorePicker` subclasses `Picker` to draw black-on-white like the score
+  screen (its scroll arrows come from the `PickerArrowUp` / `PickerArrowDown`
+  drawables, the confirm mark from `picker_confirm`). `menuString` /
+  `centreTitles` / `titleInset` / `titleLocX` / `titleJustification` /
+  `winScoreSubLabel` / `pickerArrow` / `buildMainMenu` / `buildWinScorePicker`
+  are file-scope helpers.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
   `AwayScoreValueLabel`, the win score (or `win_score_off_indicator` when

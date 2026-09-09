@@ -12,10 +12,11 @@ yet released, so everything currently lives under Unreleased.
 - One point per button press to either side (Up = home, Down = away).
 - Undo the last point, with full point-by-point history (Start / Enter).
 - Options menu (hold Menu): New Game, Win Score, Win by 2. The menu is titled
-  with the app name, left-aligned.
+  with the app name — left-aligned on Instinct (clearing the sub-screen),
+  centred on every other watch.
 - Win Score opens a two-digit picker (tens + ones wheels); 00 = off. When a
   win score is set the watch buzzes on a win; when off, play continues
-  indefinitely.
+  indefinitely. The picker is black-on-white to match the score screen.
 - "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it
   off for first-to-the-win-score. Toggling the rule redraws the score screen
   right away, so it can win or reopen the current game immediately.

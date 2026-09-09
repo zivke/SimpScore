@@ -1,3 +1,8 @@
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <bitmap id="LauncherIcon" filename="scoreboard_62px_wht_no_bkgd.png" dithering="none" />
+
+    <!-- Black scroll arrows for the win-score picker (its built-in arrows are
+         white and vanish on the picker's white background). -->
+    <bitmap id="PickerArrowUp" filename="picker_arrow_up.png" dithering="none" />
+    <bitmap id="PickerArrowDown" filename="picker_arrow_down.png" dithering="none" />
 </drawables>
