@@ -21,4 +21,7 @@ yet released, so everything currently lives under Unreleased.
   right away, so it can win or reopen the current game immediately.
 - The score, undo history, win score and Win-by-2 setting are saved and
   restored when you leave and reopen the app.
-- Instinct 2 support.
+- Support for ~100 Garmin watches across round, rectangular and Instinct
+  (semi-octagon) screens. The Instinct screen is unchanged; other shapes get a
+  matching layout — clock band, big HOME / AWAY numbers, and the win score as a
+  `WIN` caption where there is no sub-screen circle.

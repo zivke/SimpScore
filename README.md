@@ -54,19 +54,24 @@ never reports a result.
 |-------------------------------------|--------------------------------------------------|
 | `source/`                           | app code                                         |
 | `source-test/`                      | unit tests (test build only)                     |
-| `resources/`                        | strings and drawables (the menu is built in code) |
-| `resources-semioctagon-176x176/`    | layout for the instinct2's screen shape/size     |
-| `manifest.xml`                      | product list, permissions, languages             |
+| `resources/`                        | strings, drawables, and `layouts/` (fallback layout; menu is built in code) |
+| `resources-semioctagon-176x176/`    | layout for the Instinct's screen shape/size      |
+| `resources-semioctagon/`, `resources-rectangle/` | layouts for the smaller Instincts and rectangular watches |
+| `manifest.xml`                      | product list (~100 devices), permissions, languages |
 | `monkey.jungle` / `monkey-test.jungle` | app build / test build                        |
 
 All user-visible text lives in `resources/strings/strings.xml`.
 
 ## Supported devices
 
-- Instinct 2 (`instinct2`)
+~100 Garmin watches across round, rectangular and Instinct (semi-octagon)
+screens — fēnix, Forerunner, Instinct, Venu, epix, MARQ, D2, Descent, vívoactive
+and Approach families. The full list is `manifest.xml`'s `iq:products`.
 
-More devices need a manifest entry plus a `resources-<shape>/layout.xml` for
-their screen shape.
+The score screen keeps the Instinct look everywhere: a clock band on top, big
+HOME / AWAY numbers, and the win score in the Instinct sub-screen circle (a
+`WIN` caption on watches without one). Adding a device needs a manifest entry;
+a new screen *shape* also needs a `resources-<shape>/layouts/layout.xml`.
 
 ## License
 

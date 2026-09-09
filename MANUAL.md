@@ -72,4 +72,6 @@ comes back exactly where you left it.
 
 ## Supported watches
 
-Instinct 2 (and Instinct 2 Solar / Dual Power / dēzl Edition).
+Most current Garmin watches — the fēnix, Forerunner, Instinct, Venu, epix, MARQ,
+D2, Descent, vívoactive and Approach families, round, rectangular and
+Instinct-shaped screens alike. See `manifest.xml` for the exact list.

@@ -1,0 +1,38 @@
+<resources>
+    <!-- Base fallback score screen. Percentage coordinates, so it renders on any
+         resolution/shape that has no more specific resources-<qualifier>/ folder
+         (e.g. semiround). round / rectangle / semi-octagon each override this. -->
+    <drawable-list id="backdrop" background="Graphics.COLOR_WHITE">
+        <shape type="rectangle" x="0" y="0" width="100%" height="14%" color="Graphics.COLOR_BLACK" />
+    </drawable-list>
+    <layouts>
+        <layout id="MainLayout">
+            <drawable id="backdrop" />
+
+            <label id="ClockLabel" text="XX:XX" x="50%" y="7%" color="Graphics.COLOR_WHITE"
+                font="Graphics.FONT_XTINY"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+
+            <label id="WinScoreTextLabel" text="@Strings.label_win_target" x="50%" y="21%"
+                color="Graphics.COLOR_BLACK" font="Graphics.FONT_XTINY"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+            <label id="ScoreToWinValueLabel" text="21" x="50%" y="31%"
+                font="Graphics.FONT_NUMBER_MILD" color="Graphics.COLOR_BLACK"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+
+            <label id="HomeScoreTextLabel" text="@Strings.label_home" x="24%" y="48%"
+                font="Graphics.FONT_TINY" color="Graphics.COLOR_BLACK"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+            <label id="HomeScoreValueLabel" text="00" x="24%" y="68%"
+                font="Graphics.FONT_NUMBER_HOT" color="Graphics.COLOR_BLACK"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+
+            <label id="AwayScoreTextLabel" text="@Strings.label_away" x="76%" y="48%"
+                font="Graphics.FONT_TINY" color="Graphics.COLOR_BLACK"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+            <label id="AwayScoreValueLabel" text="00" x="76%" y="68%"
+                font="Graphics.FONT_NUMBER_HOT" color="Graphics.COLOR_BLACK"
+                justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
+        </layout>
+    </layouts>
+</resources>

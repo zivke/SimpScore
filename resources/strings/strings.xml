@@ -5,6 +5,11 @@
     <string id="label_home">HOME</string>
     <string id="label_away">AWAY</string>
 
+    <!-- Static caption above the win-score number on screens with no sub-screen
+         (round, rectangle). The Instinct layout uses its sub-screen circle
+         instead and does not show this. -->
+    <string id="label_win_target">WIN</string>
+
     <string id="menu_new_game">New Game</string>
     <string id="menu_win_score">Win Score</string>
     <string id="menu_win_score_off">Off</string>

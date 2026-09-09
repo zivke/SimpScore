@@ -82,13 +82,23 @@ and both delegates. Delegates mutate the model and call
 ## Resources & devices
 
 - `resources/` — base resources: `strings/strings.xml` (**all** user-visible
-  text) and `drawables/`. The menu is built in code, not from a menu resource.
-- `resources-semioctagon-176x176/layout.xml` — the **only** layout definition,
-  written for the instinct2's screen shape and size; base `resources/` has no
-  layout. A device with a different shape needs its own
-  `resources-<shape>[-<size>]/layout.xml` layered over `resources/`.
-- Adding a product means editing `manifest.xml`'s `iq:products` (use the VS Code
-  command palette, "Monkey C: Edit Products") and downloading that device.
+  text), `drawables/`, and `layouts/layout.xml`, the fallback score screen
+  (percentage coords) used by any device without a more specific folder. The
+  menu is built in code, not from a menu resource.
+- Layout folders, most specific wins: `resources-semioctagon-176x176/layout.xml`
+  (instinct2 and its 176×176 semi-octagon siblings — has the sub-screen circle
+  and clock band, **the reference look**); `resources-semioctagon/layouts/`
+  (smaller Instincts, instinct2s / instincte40mm); `resources-rectangle/layouts/`
+  (venu sq, venu x1); `resources/layouts/` catches round + semiround. The
+  non-Instinct layouts have no sub-screen, so the win score shows as a `WIN`
+  caption (`label_win_target`) plus `ScoreToWinValueLabel` between the clock band
+  and the score columns. Every layout must define `ClockLabel`,
+  `ScoreToWinValueLabel`, `HomeScoreValueLabel`, `AwayScoreValueLabel` (the ids
+  `SimpScoreView.onUpdate` looks up).
+- `manifest.xml` lists ~100 products (round, rectangle and semi-octagon watches).
+  Adding one means editing `iq:products` (VS Code palette "Monkey C: Edit
+  Products", or by hand) and downloading that device; check it renders with
+  `make build DEVICE=<id>` and a sim screenshot.
 - **Never change `manifest.xml`'s `id`** (`734088d3-…`) — it is the published
   app's identity. The "generated file, do not edit" banner refers to
   hand-editing; the palette commands are the supported way to change it.
