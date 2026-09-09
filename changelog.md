@@ -11,7 +11,8 @@ yet released, so everything currently lives under Unreleased.
   (a dash when off) and the time of day.
 - One point per button press to either side (Up = home, Down = away).
 - Undo the last point, with full point-by-point history (Start / Enter).
-- Options menu (hold Menu): New Game, Win Score, Win by 2.
+- Options menu (hold Menu): New Game, Win Score, Win by 2. The menu is titled
+  with the app name, left-aligned.
 - Win Score opens a two-digit picker (tens + ones wheels); 00 = off. When a
   win score is set the watch buzzes on a win; when off, play continues
   indefinitely.

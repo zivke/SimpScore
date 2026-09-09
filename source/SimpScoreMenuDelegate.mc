@@ -24,8 +24,21 @@ function winScoreSubLabel(winAt as Number?) as String {
 }
 
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
-  // No title: "SimpScore" wraps mid-word in the narrow Menu2 title area.
-  var menu = new WatchUi.Menu2({});
+  // The app name as the title, drawn left-aligned via a Text drawable (a
+  // plain string title centres and wraps mid-word in the narrow Menu2 title
+  // area). :icon is also set for the sub-window on devices that use it.
+  var title = new WatchUi.Text({
+    :text => menuString(Rez.Strings.AppName),
+    :color => Graphics.COLOR_WHITE,
+    :font => Graphics.FONT_SMALL,
+    :justification => Graphics.TEXT_JUSTIFY_LEFT,
+    :locX => WatchUi.LAYOUT_HALIGN_LEFT,
+    :locY => WatchUi.LAYOUT_VALIGN_CENTER,
+  });
+  var menu = new WatchUi.Menu2({
+    :title => title,
+    :icon => Rez.Drawables.LauncherIcon,
+  });
   menu.addItem(
     new WatchUi.MenuItem(menuString(Rez.Strings.menu_new_game), null, :new_game, null)
   );
