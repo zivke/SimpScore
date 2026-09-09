@@ -57,7 +57,7 @@ function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
     :text => menuString(Rez.Strings.menu_win_score),
     :color => Graphics.COLOR_WHITE,
     :font => Graphics.FONT_TINY,
-    :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+    :locX => WatchUi.LAYOUT_HALIGN_LEFT,
     :locY => WatchUi.LAYOUT_VALIGN_BOTTOM,
   });
 

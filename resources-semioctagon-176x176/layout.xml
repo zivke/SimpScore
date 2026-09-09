@@ -2,15 +2,18 @@
     <!-- The Instinct 2 subscreen is a 62x62 circle centred at (144, 31).
          Keep the win-score backdrop and digits well inside its rim. -->
     <drawable-list id="backdrop" background="Graphics.COLOR_WHITE">
-        <shape type="circle" x="144" y="31" radius="31" color="Graphics.COLOR_BLACK" />
+        <shape type="circle" x="144" y="31" radius="35" color="Graphics.COLOR_BLACK" />
+        <shape type="rectangle" x="0" y="0" width="176" height="26" color="Graphics.COLOR_BLACK" />
     </drawable-list>
     <layouts>
         <layout id="MainLayout">
             <drawable id="backdrop" />
 
-            <label id="ClockLabel" text="00:00" x="72" y="6" font="Graphics.FONT_TINY"
-                color="Graphics.COLOR_BLACK"
-                justification="Graphics.TEXT_JUSTIFY_CENTER" />
+            <bitmap id="ClockIcon" x="38" y="6"
+				filename="custom_clock_15px_wht_bo_bkgnd.png" />
+			<label id="ClockLabel" text="XX:XX" x="45%" y="12" color="Graphics.COLOR_WHITE"
+				font="Graphics.FONT_XTINY"
+				justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 
             <label id="ScoreToWinValueLabel" text="21" x="144" y="31"
                 font="Graphics.FONT_NUMBER_MILD"
