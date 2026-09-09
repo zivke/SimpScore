@@ -1,5 +1,6 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.System;
 import Toybox.WatchUi;
 
 // The options menu (Menu2, built in code):
@@ -16,6 +17,12 @@ function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
 }
 
+// Left inset for menu / picker titles: 6% of the screen width, so the text
+// sits just off the edge rather than flush against it.
+function titleInset() as Number {
+  return System.getDeviceSettings().screenWidth * 6 / 100;
+}
+
 function winScoreSubLabel(winAt as Number?) as String {
   if (winAt == null) {
     return menuString(Rez.Strings.menu_win_score_off);
@@ -24,15 +31,16 @@ function winScoreSubLabel(winAt as Number?) as String {
 }
 
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
-  // The app name as the title, drawn left-aligned via a Text drawable (a
-  // plain string title centres and wraps mid-word in the narrow Menu2 title
-  // area). :icon is also set for the sub-window on devices that use it.
+  // The app name as the title, left-justified via a Text drawable (a plain
+  // string title centres and wraps mid-word in the narrow Menu2 title area)
+  // and inset from the left edge by titleInset(). :icon is also set for the
+  // sub-window on devices that use it.
   var title = new WatchUi.Text({
     :text => menuString(Rez.Strings.AppName),
     :color => Graphics.COLOR_WHITE,
     :font => Graphics.FONT_SMALL,
     :justification => Graphics.TEXT_JUSTIFY_LEFT,
-    :locX => WatchUi.LAYOUT_HALIGN_LEFT,
+    :locX => titleInset(),
     :locY => WatchUi.LAYOUT_VALIGN_CENTER,
   });
   var menu = new WatchUi.Menu2({
@@ -70,7 +78,8 @@ function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
     :text => menuString(Rez.Strings.menu_win_score),
     :color => Graphics.COLOR_WHITE,
     :font => Graphics.FONT_TINY,
-    :locX => WatchUi.LAYOUT_HALIGN_LEFT,
+    :justification => Graphics.TEXT_JUSTIFY_LEFT,
+    :locX => titleInset(),
     :locY => WatchUi.LAYOUT_VALIGN_BOTTOM,
   });
 
