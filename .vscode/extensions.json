@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "garmin.monkey-c",
+    "redhat.vscode-xml",
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "anthropic.claude-code"
+  ]
+}

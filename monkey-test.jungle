@@ -1,0 +1,5 @@
+# Unit-test build: the app sources plus source-test/, compiled with `-t`.
+# Used by `make test`. $(base.sourcePath) defaults to `source`.
+project.manifest = manifest.xml
+
+base.sourcePath = $(base.sourcePath);source-test
