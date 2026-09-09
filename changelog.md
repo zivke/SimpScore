@@ -7,14 +7,16 @@ yet released, so everything currently lives under Unreleased.
 ## [Unreleased]
 
 ### Added
-- Score screen showing the home score, away score and the current win score
-  (a dash when the win score is off).
+- Score screen showing the home score, away score, the current win score
+  (a dash when off) and the time of day.
 - One point per button press to either side (Up = home, Down = away).
 - Undo the last point, with full point-by-point history (Start / Enter).
-- Options menu with New Game and Win Score. Win Score opens a number picker
-  (0 = off, up to 99). With a win score set, a side wins on reaching it with a
-  two-point margin and the watch buzzes; with it off, play continues
+- Options menu (hold Menu): New Game, Win Score, Win by 2.
+- Win Score opens a two-digit picker (tens + ones wheels); 00 = off. When a
+  win score is set the watch buzzes on a win; when off, play continues
   indefinitely.
-- The score, undo history and win score are saved and restored when you leave
-  and reopen the app.
+- "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it
+  off for first-to-the-win-score.
+- The score, undo history, win score and Win-by-2 setting are saved and
+  restored when you leave and reopen the app.
 - Instinct 2 support.

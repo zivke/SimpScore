@@ -5,20 +5,23 @@ board games, anything with a **home** and an **away** side.
 
 - one button per side, one point at a time
 - undo the last point (full history, not just the last one)
-- optional win score, set with a number picker (0 = off); reaching it with a
-  two-point margin ends the game and buzzes the watch
+- optional win score, set with a two-digit picker (00 = off)
+- "win by 2" rule, toggleable
+- time of day on the score screen
 - new game / reset from the options menu
 - one score screen, one menu
-- score, history and win score are kept when you leave and reopen the app
+- score, history, win score and settings are kept when you leave and reopen the app
+
+See **[MANUAL.md](MANUAL.md)** for the full user guide.
 
 ## Controls
 
-| Button        | Action                     |
-|---------------|----------------------------|
-| Up            | Home point                 |
-| Down          | Away point                 |
-| Start / Enter | Undo last point            |
-| Menu          | Options (new game, win-at) |
+| Button        | Action                          |
+|---------------|---------------------------------|
+| Up            | Home point                      |
+| Down          | Away point                      |
+| Start / Enter | Undo last point                 |
+| Menu (hold)   | Options (new game, win score, win by 2) |
 
 ## Build & run
 
@@ -51,7 +54,7 @@ never reports a result.
 |-------------------------------------|--------------------------------------------------|
 | `source/`                           | app code                                         |
 | `source-test/`                      | unit tests (test build only)                     |
-| `resources/`                        | strings, menu, drawables — base resources        |
+| `resources/`                        | strings and drawables (the menu is built in code) |
 | `resources-semioctagon-176x176/`    | layout for the instinct2's screen shape/size     |
 | `manifest.xml`                      | product list, permissions, languages             |
 | `monkey.jungle` / `monkey-test.jungle` | app build / test build                        |

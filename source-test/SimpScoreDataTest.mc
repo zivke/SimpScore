@@ -101,6 +101,48 @@ function clearPersisted() as Void {
   Storage.deleteValue(STORAGE_AWAY);
   Storage.deleteValue(STORAGE_ACTIONS);
   Storage.deleteValue(STORAGE_WIN_AT);
+  Storage.deleteValue(STORAGE_WIN_BY_2);
+}
+
+// Alternate points home/away up to 5-4 without ever passing through a win state.
+function playToFiveFour(data as SimpScoreData) as Void {
+  var toHome = [true, false, true, false, true, false, true, false, true];
+  for (var i = 0; i < toHome.size(); i++) {
+    if (toHome[i]) { data.addHomePoint(); } else { data.addAwayPoint(); }
+  }
+}
+
+(:test)
+function firstToWinScoreWinsWhenWinByTwoOff(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(5);
+  data.setWinBy2(false);
+  playToFiveFour(data);
+  return data.getHomeScore() == 5 && data.getAwayScore() == 4 && data.checkWin();
+}
+
+(:test)
+function winByTwoOnStillNeedsMargin(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(5);
+  data.setWinBy2(true);
+  playToFiveFour(data);
+  return data.getHomeScore() == 5 && data.getAwayScore() == 4 && !data.checkWin();
+}
+
+(:test)
+function persistRoundTripsWinByTwo(logger as Test.Logger) as Boolean {
+  clearPersisted();
+  var a = new SimpScoreData();
+  a.setWinBy2(false);
+  a.persist();
+
+  var b = new SimpScoreData();
+  b.restore();
+  var ok = b.getWinBy2() == false;
+
+  clearPersisted();
+  return ok;
 }
 
 (:test)

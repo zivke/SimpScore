@@ -6,6 +6,7 @@ const STORAGE_HOME = "homeScore";
 const STORAGE_AWAY = "awayScore";
 const STORAGE_ACTIONS = "actions";
 const STORAGE_WIN_AT = "winAt";
+const STORAGE_WIN_BY_2 = "winBy2";
 
 class SimpScoreData {
   enum Action {
@@ -15,6 +16,10 @@ class SimpScoreData {
 
   // null means no win score: checkWin() is always false and play continues.
   private var _winAt as Number? = 7;
+
+  // When true, winning also requires a two-point lead; when false, first side
+  // to reach the win score wins.
+  private var _winBy2 as Boolean = true;
 
   private var _homeScore as Number;
   private var _awayScore as Number;
@@ -39,6 +44,7 @@ class SimpScoreData {
     Storage.setValue(STORAGE_AWAY, _awayScore);
     Storage.setValue(STORAGE_ACTIONS, _actions as Array<Number>);
     Storage.setValue(STORAGE_WIN_AT, _winAt == null ? 0 : _winAt);
+    Storage.setValue(STORAGE_WIN_BY_2, _winBy2);
   }
 
   function restore() as Void {
@@ -61,6 +67,11 @@ class SimpScoreData {
     if (winAt instanceof Number) {
       _winAt = (winAt == 0) ? null : winAt;
     }
+
+    var winBy2 = Storage.getValue(STORAGE_WIN_BY_2);
+    if (winBy2 instanceof Boolean) {
+      _winBy2 = winBy2;
+    }
   }
 
   function getWinAt() as Number? {
@@ -69,6 +80,14 @@ class SimpScoreData {
 
   function setWinAt(winAt as Number?) as Void {
     self._winAt = winAt;
+  }
+
+  function getWinBy2() as Boolean {
+    return self._winBy2;
+  }
+
+  function setWinBy2(winBy2 as Boolean) as Void {
+    self._winBy2 = winBy2;
   }
 
   function getHomeScore() as Number {
@@ -118,13 +137,14 @@ class SimpScoreData {
       return false;
     }
 
-    if (
-      (_homeScore >= winAt || _awayScore >= winAt) &&
-      (_homeScore - _awayScore).abs() > 1
-    ) {
-      return true;
+    if (_homeScore < winAt && _awayScore < winAt) {
+      return false;
     }
 
-    return false;
+    if (_winBy2) {
+      return (_homeScore - _awayScore).abs() > 1;
+    }
+
+    return _homeScore != _awayScore;
   }
 }

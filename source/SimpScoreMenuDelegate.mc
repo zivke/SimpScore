@@ -2,17 +2,15 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-// The options menu, built in code as a Menu2:
+// The options menu (Menu2, built in code):
 //
 //   New Game
 //   Win Score            <current value, or "Off">
+//   Win by 2             [toggle]
 //
-// Selecting "Win Score" opens a number Picker: index 0 is "Off", 1..WIN_SCORE_MAX
-// are the score. On accept the value is written to the model (0 -> null) and the
-// "Win Score" row's sub-label is updated in place so it is current when the
-// picker pops.
-
-const WIN_SCORE_MAX = 99;
+// "Win Score" opens a two-wheel number Picker (tens, ones); 00 means "off".
+// On accept the value is written to the model and the "Win Score" sub-label
+// is refreshed in place.
 
 function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
@@ -26,7 +24,8 @@ function winScoreSubLabel(winAt as Number?) as String {
 }
 
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
-  var menu = new WatchUi.Menu2({ :title => menuString(Rez.Strings.AppName) });
+  // No title: "SimpScore" wraps mid-word in the narrow Menu2 title area.
+  var menu = new WatchUi.Menu2({});
   menu.addItem(
     new WatchUi.MenuItem(menuString(Rez.Strings.menu_new_game), null, :new_game, null)
   );
@@ -38,15 +37,21 @@ function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
       null
     )
   );
+  menu.addItem(
+    new WatchUi.ToggleMenuItem(
+      menuString(Rez.Strings.menu_win_by_2),
+      null,
+      :win_by_2,
+      data.getWinBy2(),
+      null
+    )
+  );
   return menu;
 }
 
 function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
   var current = data.getWinAt();
-  var startIndex = (current == null) ? 0 : current;
-  if (startIndex > WIN_SCORE_MAX) {
-    startIndex = WIN_SCORE_MAX;
-  }
+  var value = (current == null) ? 0 : current;
 
   var title = new WatchUi.Text({
     :text => menuString(Rez.Strings.menu_win_score),
@@ -58,18 +63,20 @@ function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
 
   return new WatchUi.Picker({
     :title => title,
-    :pattern => [new WinScorePickerFactory()] as Array<WatchUi.PickerFactory>,
-    :defaults => [startIndex] as Array<Number>,
+    :pattern =>
+      [new DigitPickerFactory(), new DigitPickerFactory()] as Array<WatchUi.PickerFactory>,
+    :defaults => [value / 10, value % 10] as Array<Number>,
   });
 }
 
-class WinScorePickerFactory extends WatchUi.PickerFactory {
+// One 0-9 wheel. Two of these make the two-digit win-score picker.
+class DigitPickerFactory extends WatchUi.PickerFactory {
   function initialize() {
     PickerFactory.initialize();
   }
 
   function getSize() as Number {
-    return WIN_SCORE_MAX + 1; // index 0 == "Off", 1..WIN_SCORE_MAX
+    return 10;
   }
 
   function getValue(index as Number) as Object? {
@@ -77,11 +84,10 @@ class WinScorePickerFactory extends WatchUi.PickerFactory {
   }
 
   function getDrawable(index as Number, isSelected as Boolean) as Drawable? {
-    var label = (index == 0) ? menuString(Rez.Strings.menu_win_score_off) : index.toString();
     return new WatchUi.Text({
-      :text => label,
+      :text => index.toString(),
       :color => Graphics.COLOR_WHITE,
-      :font => Graphics.FONT_NUMBER_MILD,
+      :font => Graphics.FONT_NUMBER_MEDIUM,
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
       :locY => WatchUi.LAYOUT_VALIGN_CENTER,
     });
@@ -109,6 +115,9 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
         new WinScorePickerDelegate(_data, item),
         WatchUi.SLIDE_LEFT
       );
+    } else if (id == :win_by_2) {
+      _data.setWinBy2((item as WatchUi.ToggleMenuItem).isEnabled());
+      _data.persist();
     }
   }
 }
@@ -124,8 +133,10 @@ class WinScorePickerDelegate extends WatchUi.PickerDelegate {
   }
 
   function onAccept(values as Array) as Boolean {
-    var value = values[0] as Number?;
-    _data.setWinAt((value == null || value == 0) ? null : value);
+    var tens = values[0] as Number;
+    var ones = values[1] as Number;
+    var value = tens * 10 + ones;
+    _data.setWinAt(value == 0 ? null : value);
     _data.persist();
     _winScoreItem.setSubLabel(winScoreSubLabel(_data.getWinAt()));
     WatchUi.popView(WatchUi.SLIDE_DOWN);

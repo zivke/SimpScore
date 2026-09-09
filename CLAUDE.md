@@ -8,12 +8,14 @@ Garmin Connect IQ watch app **SimpScore**. It tracks a running score between
 two sides, **home** and **away**, for sports or simple games:
 
 - one point at a time to either side, with undo backed by a full action log
-- an optional win score, set with a number picker (0 = off); reaching it with a
-  two-point margin ends the game and buzzes the watch, and off lets play
-  continue indefinitely
+- an optional win score, set with a two-digit picker (00 = off); reaching it
+  wins, and off lets play continue indefinitely
+- a toggleable "win by 2" rule (default on): winning also requires a two-point
+  lead. When off, first to the win score wins
+- time of day shown on the score screen
 - new-game / reset
 - a single score screen plus an options menu
-- score, undo history and win score survive leaving and reopening the app
+- score, undo history, win score and settings survive leaving and reopening the app
 
 ## Build & run
 
@@ -43,30 +45,33 @@ and both delegates. Delegates mutate the model and call
 `SimpScoreApp.onStart` restores persisted state and `onStop` saves it.
 
 - **`source/SimpScoreData.mc`** — the model, no UI. Holds `_homeScore`,
-  `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score) and
-  `_actions`, an `Array<Action>` of `HOME_POINT` / `AWAY_POINT` that
-  `undoLastAction()` pops. `checkWin()` is false when `_winAt` is `null`,
-  otherwise true once a side reaches `_winAt` *and* leads by more than one
-  point; `addHomePoint` / `addAwayPoint` become no-ops after a win. `reset()`
-  re-runs `initialize()` (which leaves `_winAt` alone). `persist()` / `restore()`
-  move the four fields to/from `Application.Storage` (win score as `0` = off);
-  they are **only** called from the app lifecycle and the delegates, never from
-  this class's own mutators, so `SimpScoreData` unit tests stay Storage-free.
+  `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score),
+  `_winBy2` (`Boolean`, default true) and `_actions`, an `Array<Action>` of
+  `HOME_POINT` / `AWAY_POINT` that `undoLastAction()` pops. `checkWin()` is
+  false when `_winAt` is `null`; otherwise a side must reach `_winAt`, plus —
+  when `_winBy2` — lead by more than one point. `addHomePoint` / `addAwayPoint`
+  become no-ops after a win. `reset()` re-runs `initialize()` (which leaves the
+  settings alone). `persist()` / `restore()` move the five fields to/from
+  `Application.Storage` (win score as `0` = off); they are **only** called from
+  the app lifecycle and the delegates, never from this class's own mutators, so
+  `SimpScoreData` unit tests stay Storage-free.
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
   previous-page = home point, next-page = away point, select = undo, menu =
   push the main menu (`buildMainMenu`). Calls `_data.persist()` after each
   change (write-through) and `Attention.vibrate` when a point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
-  code): "New Game" and "Win Score" (sub-label = current value or "Off").
-  Selecting "Win Score" pushes a `WatchUi.Picker` number spinner
-  (`WinScorePickerFactory`, index 0 = "Off", `1..WIN_SCORE_MAX`); on accept,
-  `WinScorePickerDelegate` calls `setWinAt` (0 → `null`) and updates the parent
-  row's sub-label in place. `menuString` / `winScoreSubLabel` / `buildMainMenu`
-  / `buildWinScorePicker` are file-scope helpers.
+  code, no title): "New Game", "Win Score" (sub-label = value or "Off"), and a
+  "Win by 2" `ToggleMenuItem`. Selecting "Win Score" pushes a two-column
+  `WatchUi.Picker` of `DigitPickerFactory` wheels (tens, ones); on accept,
+  `WinScorePickerDelegate` computes `tens*10 + ones` (`0` → `null`) and updates
+  the sub-label in place. `menuString` / `winScoreSubLabel` / `buildMainMenu` /
+  `buildWinScorePicker` are file-scope helpers.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
-  `AwayScoreValueLabel` and the win score (or `win_score_off_indicator` when
-  `null`) into `ScoreToWinValueLabel`, via `findDrawableById`.
+  `AwayScoreValueLabel`, the win score (or `win_score_off_indicator` when
+  `null`) into `ScoreToWinValueLabel`, and `hh:mm` (12/24h per device setting)
+  into `ClockLabel`. A 20-second `Timer` started in `onShow` / stopped in
+  `onHide` keeps the clock current.
 
 ## Resources & devices
 

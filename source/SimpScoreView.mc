@@ -1,9 +1,12 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.System;
+import Toybox.Timer;
 import Toybox.WatchUi;
 
 class SimpScoreView extends WatchUi.View {
   private var _data as SimpScoreData;
+  private var _clockTimer as Timer.Timer?;
 
   function initialize(data as SimpScoreData) {
     self._data = data;
@@ -16,13 +19,23 @@ class SimpScoreView extends WatchUi.View {
     setLayout(Rez.Layouts.MainLayout(dc));
   }
 
-  // Called when this View is brought to the foreground. Restore
-  // the state of this View and prepare it to be shown. This includes
-  // loading resources into memory.
-  function onShow() as Void {}
+  // Keep the clock roughly current while the view is up.
+  function onShow() as Void {
+    _clockTimer = new Timer.Timer();
+    _clockTimer.start(method(:onClockTick), 20000, true);
+  }
+
+  function onClockTick() as Void {
+    WatchUi.requestUpdate();
+  }
 
   // Update the view
   function onUpdate(dc as Dc) as Void {
+    var clockLabel = View.findDrawableById("ClockLabel") as Text?;
+    if (clockLabel != null) {
+      clockLabel.setText(currentTimeText());
+    }
+
     // Set the score to win value
     var scoreToWinValueLabel =
       View.findDrawableById("ScoreToWinValueLabel") as Text?;
@@ -46,7 +59,7 @@ class SimpScoreView extends WatchUi.View {
       );
     }
 
-    // Set the Home score value
+    // Set the Away score value
     var awayScoreValueLabel =
       View.findDrawableById("AwayScoreValueLabel") as Text?;
     if (awayScoreValueLabel != null) {
@@ -59,8 +72,24 @@ class SimpScoreView extends WatchUi.View {
     View.onUpdate(dc);
   }
 
-  // Called when this View is removed from the screen. Save the
-  // state of this View here. This includes freeing resources from
-  // memory.
-  function onHide() as Void {}
+  // hh:mm, following the watch's 12/24-hour setting.
+  private function currentTimeText() as String {
+    var now = System.getClockTime();
+    var hour = now.hour;
+    if (!System.getDeviceSettings().is24Hour) {
+      hour = hour % 12;
+      if (hour == 0) {
+        hour = 12;
+      }
+      return Lang.format("$1$:$2$", [hour, now.min.format("%02d")]);
+    }
+    return Lang.format("$1$:$2$", [hour.format("%02d"), now.min.format("%02d")]);
+  }
+
+  function onHide() as Void {
+    if (_clockTimer != null) {
+      _clockTimer.stop();
+      _clockTimer = null;
+    }
+  }
 }
