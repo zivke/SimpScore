@@ -19,22 +19,22 @@ enter arbitrary target scores rather than the fixed 7 / 11 / 21.
 ## Build & run
 
 SDK, simulator, and signing key are already installed in the devcontainer.
-Never install or regenerate them.
+Never install or regenerate them. Everything goes through the `Makefile`
+(`make help` lists targets); `DEVICE` defaults to `instinct2`.
 
-- **Build** (verified working):
-  `monkeyc -f monkey.jungle -o bin/SimpScore.prg -y ~/.ciq/developer_key.der -d instinct2 -w`
-  `-w` prints warnings; add `-r` for a release build. `instinct2` is the only
-  product (`minApiLevel 3.2.0`); `monkey.jungle` sets nothing but the manifest.
-- **Run in the simulator**: start it once with `connectiq`, then
-  `monkeydo bin/SimpScore.prg instinct2`. The simulator must be up before `monkeydo`.
-- **No test suite** — there is no `monkey-test.jungle` or `source-test/`.
+- `make build` — debug `.prg`; `make release` strips debug info.
+- `make sim` — start the simulator (no-op if already running); `make run`
+  does `sim` + build + `monkeydo`.
+- `make test` — compiles `monkey-test.jungle` (`source` + `source-test`, `-t`)
+  and runs the unit tests in the simulator. `monkeydo -t` exits non-zero even
+  on success, so the target keys pass/fail off the runner's `PASSED` line.
+- `make package` — store `.iq`; needs `make all-devices` first.
+- Underneath, a build is just
+  `monkeyc -f monkey.jungle -o bin/SimpScore.prg -y ~/.ciq/developer_key.der -d instinct2 -w`.
 - Type checking is **Strict** (`monkeyC.typeCheckLevel`): annotate every
   parameter and return, matching the existing code.
 
-`.devcontainer/README.md` covers one-time SDK setup (`connect-iq-sdk-manager
-…`). Both that file and earlier versions of this one describe a `Makefile`
-workflow (`make build`, `make sim`, `make dev-device`, `make package`, …) — no
-such Makefile is in the tree. Use the `monkeyc` / `monkeydo` commands above.
+`.devcontainer/README.md` covers one-time SDK setup (`connect-iq-sdk-manager …`).
 
 ## Architecture
 
@@ -75,5 +75,9 @@ and both delegates. Delegates mutate the model and call
 
 - User-visible text goes in `resources/strings/strings.xml`, never inline.
 - Keep parameters and returns annotated (Strict type checking).
-- No `changelog.md` or `README.md` exists yet; add and maintain them if the app
-  gains user-visible surface worth documenting.
+- Two-space indent (`.editorconfig`).
+- Update `changelog.md` (Keep a Changelog, everything under Unreleased until
+  the first store release) for any user-visible change; update `README.md`'s
+  supported-devices list when products change.
+- `SimpScoreData` is pure logic — add a `(:test)` case in
+  `source-test/SimpScoreDataTest.mc` when you change scoring, undo, or win rules.
