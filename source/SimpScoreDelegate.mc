@@ -49,7 +49,7 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
   function vibrate() as Void {
     if (Attention has :vibrate) {
       Attention.vibrate([
-        // 100% strength, 500ms duration
+        // 100% strength, 3000ms duration: a long, unmissable win buzz.
         new Attention.VibeProfile(100, 3000),
       ]);
     }
