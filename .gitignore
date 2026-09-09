@@ -1,0 +1,23 @@
+# Connect IQ build output (compiler-generated)
+bin/
+build/
+gen/
+*.prg
+*.prg.debug.xml
+
+# Store package (`monkeyc -e` / `make package`)
+*.iq
+
+# Signing keys — the developer key lives in ~/.ciq and must never be
+# committed; a leaked key means a published app can't be updated safely.
+*.der
+*.pem
+
+# Claude Code: .claude/settings.json is shared and tracked; local overrides are not
+.claude/settings.local.json
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
