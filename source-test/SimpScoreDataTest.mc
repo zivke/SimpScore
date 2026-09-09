@@ -75,3 +75,22 @@ function winAtIsConfigurable(logger as Test.Logger) as Boolean {
   data.setWinAt(11);
   return data.getWinAt() == 11;
 }
+
+(:test)
+function winScoreOffNeverWins(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(null);
+  for (var i = 0; i < 40; i++) {
+    data.addHomePoint();
+  }
+  return data.getHomeScore() == 40 && !data.checkWin();
+}
+
+(:test)
+function winScoreTogglesOffAndBackOn(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(null);
+  if (data.getWinAt() != null) { return false; }
+  data.setWinAt(11);
+  return data.getWinAt() == 11;
+}

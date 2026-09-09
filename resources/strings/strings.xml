@@ -2,9 +2,10 @@
     xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <string id="AppName">SimpScore</string>
 
-    <string id="menu_label_1">New Game</string>
-    <string
-        id="menu_label_2">Win at 7</string>
-    <string id="menu_label_3">Win at 11</string>
-    <string id="menu_label_4">Win at 21</string>
+    <string id="menu_new_game">New Game</string>
+    <string id="menu_win_score">Win Score</string>
+    <string id="menu_win_score_off">Off</string>
+
+    <!-- Shown in the target circle on the score screen when no win score is set. -->
+    <string id="win_score_off_indicator">-</string>
 </strings>

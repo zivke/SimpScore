@@ -8,13 +8,14 @@ Garmin Connect IQ watch app **SimpScore**. It tracks a running score between
 two sides, **home** and **away**, for sports or simple games:
 
 - one point at a time to either side, with undo backed by a full action log
-- a configurable target score ("win at"); reaching it with a two-point margin
-  ends the game and buzzes the watch
+- an optional win score, set with a number picker (0 = off); reaching it with a
+  two-point margin ends the game and buzzes the watch, and off lets play
+  continue indefinitely
 - new-game / reset
 - a single score screen plus an options menu
 
-Planned but not yet built: an option for *no* win score at all, and a way to
-enter arbitrary target scores rather than the fixed 7 / 11 / 21.
+Planned but not yet built: persisting the win score across app restarts (it
+resets to 7).
 
 ## Build & run
 
@@ -43,24 +44,31 @@ and both delegates. Delegates mutate the model and call
 `WatchUi.requestUpdate()`; the view reads the model back on `onUpdate`.
 
 - **`source/SimpScoreData.mc`** — the model, no UI. Holds `_homeScore`,
-  `_awayScore`, `_winAt` (default 7), and `_actions`, an `Array<Action>` of
-  `HOME_POINT` / `AWAY_POINT` that `undoLastAction()` pops. `checkWin()` is true
-  once a side has reached `_winAt` *and* leads by more than one point;
-  `addHomePoint` / `addAwayPoint` become no-ops after that. `reset()` re-runs
-  `initialize()`.
+  `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score) and
+  `_actions`, an `Array<Action>` of `HOME_POINT` / `AWAY_POINT` that
+  `undoLastAction()` pops. `checkWin()` is false when `_winAt` is `null`,
+  otherwise true once a side reaches `_winAt` *and* leads by more than one
+  point; `addHomePoint` / `addAwayPoint` become no-ops after a win. `reset()`
+  re-runs `initialize()` (which leaves `_winAt` alone).
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
   previous-page = home point, next-page = away point, select = undo, menu =
-  push `Rez.Menus.MainMenu`. Calls `Attention.vibrate` when a point wins.
-- **`source/SimpScoreMenuDelegate.mc`** (`MenuInputDelegate`) — `item_1` new
-  game; `item_2` / `item_3` / `item_4` set "win at" to 7 / 11 / 21.
+  push the main menu (`buildMainMenu`). Calls `Attention.vibrate` when a point wins.
+- **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
+  code): "New Game" and "Win Score" (sub-label = current value or "Off").
+  Selecting "Win Score" pushes a `WatchUi.Picker` number spinner
+  (`WinScorePickerFactory`, index 0 = "Off", `1..WIN_SCORE_MAX`); on accept,
+  `WinScorePickerDelegate` calls `setWinAt` (0 → `null`) and updates the parent
+  row's sub-label in place. `menuString` / `winScoreSubLabel` / `buildMainMenu`
+  / `buildWinScorePicker` are file-scope helpers.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
-  `onUpdate` writes the three numbers into `ScoreToWinValueLabel`,
-  `HomeScoreValueLabel`, `AwayScoreValueLabel` via `findDrawableById`.
+  `onUpdate` writes the scores into `HomeScoreValueLabel` /
+  `AwayScoreValueLabel` and the win score (or `win_score_off_indicator` when
+  `null`) into `ScoreToWinValueLabel`, via `findDrawableById`.
 
 ## Resources & devices
 
 - `resources/` — base resources: `strings/strings.xml` (**all** user-visible
-  text — `AppName`, `menu_label_1..4`), `menus/menu.xml`, `drawables/`.
+  text) and `drawables/`. The menu is built in code, not from a menu resource.
 - `resources-semioctagon-176x176/layout.xml` — the **only** layout definition,
   written for the instinct2's screen shape and size; base `resources/` has no
   layout. A device with a different shape needs its own

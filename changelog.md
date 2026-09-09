@@ -7,10 +7,12 @@ yet released, so everything currently lives under Unreleased.
 ## [Unreleased]
 
 ### Added
-- Score screen showing the home score, away score and the current win-at target.
+- Score screen showing the home score, away score and the current win score
+  (a dash when the win score is off).
 - One point per button press to either side (Up = home, Down = away).
 - Undo the last point, with full point-by-point history (Start / Enter).
-- Win-at target selectable from the menu (7, 11 or 21); a side wins on reaching
-  it with a two-point margin, and the watch buzzes.
-- New game / reset from the menu.
+- Options menu with New Game and Win Score. Win Score opens a number picker
+  (0 = off, up to 99). With a win score set, a side wins on reaching it with a
+  two-point margin and the watch buzzes; with it off, play continues
+  indefinitely.
 - Instinct 2 support.

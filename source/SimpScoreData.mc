@@ -8,7 +8,8 @@ class SimpScoreData {
     AWAY_POINT = 1,
   }
 
-  private var _winAt as Number = 7;
+  // null means no win score: checkWin() is always false and play continues.
+  private var _winAt as Number? = 7;
 
   private var _homeScore as Number;
   private var _awayScore as Number;
@@ -25,11 +26,11 @@ class SimpScoreData {
     initialize();
   }
 
-  function getWinAt() as Number {
+  function getWinAt() as Number? {
     return self._winAt;
   }
 
-  function setWinAt(winAt as Number) as Void {
+  function setWinAt(winAt as Number?) as Void {
     self._winAt = winAt;
   }
 
@@ -75,8 +76,13 @@ class SimpScoreData {
   }
 
   function checkWin() as Boolean {
+    var winAt = self._winAt;
+    if (winAt == null) {
+      return false;
+    }
+
     if (
-      (_homeScore >= _winAt || _awayScore >= _winAt) &&
+      (_homeScore >= winAt || _awayScore >= winAt) &&
       (_homeScore - _awayScore).abs() > 1
     ) {
       return true;

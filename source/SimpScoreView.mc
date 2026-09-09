@@ -27,7 +27,14 @@ class SimpScoreView extends WatchUi.View {
     var scoreToWinValueLabel =
       View.findDrawableById("ScoreToWinValueLabel") as Text?;
     if (scoreToWinValueLabel != null) {
-      scoreToWinValueLabel.setText(_data.getWinAt().format("%d").toString());
+      var winAt = _data.getWinAt();
+      if (winAt == null) {
+        scoreToWinValueLabel.setText(
+          WatchUi.loadResource(Rez.Strings.win_score_off_indicator) as String
+        );
+      } else {
+        scoreToWinValueLabel.setText(winAt.format("%d").toString());
+      }
     }
 
     // Set the Home score value

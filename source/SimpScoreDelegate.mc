@@ -12,11 +12,10 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
 
   function onMenu() as Boolean {
     WatchUi.pushView(
-      new Rez.Menus.MainMenu(),
+      buildMainMenu(_data),
       new SimpScoreMenuDelegate(_data),
       WatchUi.SLIDE_UP
     );
-    WatchUi.requestUpdate();
     return true;
   }
 
