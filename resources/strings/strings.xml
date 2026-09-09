@@ -2,6 +2,9 @@
     xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <string id="AppName">SimpScore</string>
 
+    <string id="label_home">HOME</string>
+    <string id="label_away">AWAY</string>
+
     <string id="menu_new_game">New Game</string>
     <string id="menu_win_score">Win Score</string>
     <string id="menu_win_score_off">Off</string>
