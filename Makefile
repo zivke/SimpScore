@@ -37,19 +37,32 @@ sim:
 	else \
 		echo "starting simulator (log: $(CONNECTIQ_LOG))"; \
 		setsid connectiq >$(CONNECTIQ_LOG) 2>&1 </dev/null & \
-		sleep 3; \
+		for i in $$(seq 1 30); do \
+			pgrep -x simulator >/dev/null 2>&1 && break; \
+			sleep 0.5; \
+		done; \
 	fi
 
 ## run: build then push and run on the simulator
+# monkeydo can't connect for a moment after the simulator process appears
+# (and the process can crash on first launch under X), so retry a few times.
 run: sim build
-	monkeydo $(PRG) $(DEVICE)
+	@for i in $$(seq 1 10); do \
+		monkeydo $(PRG) $(DEVICE) && exit 0; \
+		echo ">> simulator not ready, retry $$i"; sleep 1; \
+	done; \
+	echo ">> could not reach the simulator"; exit 1
 
 ## test: build the unit tests and run them on the simulator
 # monkeydo exits non-zero even when tests pass, so key the result off the
-# runner's summary line instead.
+# runner's summary line instead; retry while it can't reach the simulator.
 test: sim | $(BIN)
 	monkeyc -f $(TEST_JUNGLE) -o $(TEST_PRG) -y $(KEY) -d $(DEVICE) -t -w -l $(TYPECHECK)
-	@out=$$(monkeydo $(TEST_PRG) $(DEVICE) -t 2>&1); \
+	@for i in $$(seq 1 10); do \
+		out=$$(monkeydo $(TEST_PRG) $(DEVICE) -t 2>&1); \
+		echo "$$out" | grep -q 'Unable to connect to simulator' || break; \
+		echo ">> simulator not ready, retry $$i"; sleep 1; \
+	done; \
 	echo "$$out"; \
 	echo "$$out" | grep -q '^PASSED' || { echo ">> tests did not pass"; exit 1; }
 
