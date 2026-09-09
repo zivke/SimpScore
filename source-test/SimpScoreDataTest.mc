@@ -92,6 +92,55 @@ function winAtIsConfigurable(logger as Test.Logger) as Boolean {
 }
 
 (:test)
+function freshDataHasDefaultSettings(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  return data.getWinAt() == 7 && data.getWinBy2() == true;
+}
+
+(:test)
+function resetPreservesSettings(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(11);
+  data.setWinBy2(false);
+  data.addHomePoint();
+  data.reset();
+  return data.getWinAt() == 11 && data.getWinBy2() == false;
+}
+
+(:test)
+function undoReopensScoringAfterWin(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(2);
+  data.addHomePoint();
+  data.addHomePoint(); // 2-0 -> won
+  data.addHomePoint(); // ignored
+  data.undoLastAction(); // 1-0, game no longer won
+  if (data.checkWin()) { return false; }
+  data.addHomePoint(); // 2-0 again
+  return data.getHomeScore() == 2 && data.checkWin();
+}
+
+(:test)
+function deucePlayContinuesBeyondWinScore(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(5); // win-by-2 on by default
+  // 4-4, never passing through a win state.
+  var toHome = [true, false, true, false, true, false, true, false];
+  for (var i = 0; i < toHome.size(); i++) {
+    if (toHome[i]) { data.addHomePoint(); } else { data.addAwayPoint(); }
+  }
+  if (data.getHomeScore() != 4 || data.getAwayScore() != 4) { return false; }
+  data.addHomePoint(); // 5-4: reached winAt but no 2-point lead
+  if (data.checkWin()) { return false; }
+  data.addAwayPoint(); // 5-5: still going
+  if (data.checkWin()) { return false; }
+  data.addHomePoint(); // 6-5: still no margin
+  if (data.checkWin()) { return false; }
+  data.addHomePoint(); // 7-5: two clear
+  return data.checkWin();
+}
+
+(:test)
 function winScoreOffNeverWins(logger as Test.Logger) as Boolean {
   var data = new SimpScoreData();
   data.setWinAt(null);
@@ -177,6 +226,20 @@ function persistRestoresScoreHistoryAndWinScore(logger as Test.Logger) as Boolea
 
   clearPersisted();
   return ok;
+}
+
+(:test)
+function restoreOnEmptyStorageKeepsDefaults(logger as Test.Logger) as Boolean {
+  clearPersisted();
+  var data = new SimpScoreData();
+  data.restore();
+  var ok =
+    data.getHomeScore() == 0 &&
+    data.getAwayScore() == 0 &&
+    data.getWinAt() == 7 &&
+    data.getWinBy2() == true;
+  data.undoLastAction(); // no restored history -> must not underflow
+  return ok && data.getHomeScore() == 0;
 }
 
 (:test)
