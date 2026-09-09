@@ -17,7 +17,8 @@ yet released, so everything currently lives under Unreleased.
   win score is set the watch buzzes on a win; when off, play continues
   indefinitely.
 - "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it
-  off for first-to-the-win-score.
+  off for first-to-the-win-score. Toggling the rule redraws the score screen
+  right away, so it can win or reopen the current game immediately.
 - The score, undo history, win score and Win-by-2 setting are saved and
   restored when you leave and reopen the app.
 - Instinct 2 support.
