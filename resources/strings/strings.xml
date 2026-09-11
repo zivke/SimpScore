@@ -17,4 +17,8 @@
 
     <!-- Shown in the target circle on the score screen when no win score is set. -->
     <string id="win_score_off_indicator">-</string>
+
+    <!-- On-screen confirm button on the win-score entry screen, touchscreen
+         devices only (they have no physical select button). -->
+    <string id="button_ok">OK</string>
 </strings>

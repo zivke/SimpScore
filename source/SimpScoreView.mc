@@ -23,6 +23,14 @@ class SimpScoreView extends WatchUi.View {
   function onShow() as Void {
     _clockTimer = new Timer.Timer();
     _clockTimer.start(method(:onClockTick), 20000, true);
+
+    // Touch-first watches with no physical menu button/long-press (Venu X1
+    // and its siblings) rely on this swipe-to-reveal indicator to reach the
+    // menu at all (SimpScoreDelegate.onActionMenu handles the swipe).
+    // Guarded with `has` since older API levels don't have the method.
+    if (self has :setActionMenuIndicator) {
+      setActionMenuIndicator({ :enabled => true });
+    }
   }
 
   function onClockTick() as Void {

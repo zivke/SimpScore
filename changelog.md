@@ -13,12 +13,15 @@ yet released, so everything currently lives under Unreleased.
 - Undo the last point, with full point-by-point history (Start / Enter).
 - Options menu (hold Menu): New Game, Win Score, Win by 2. The menu is titled
   with the app name — left-aligned on Instinct (clearing the sub-screen),
-  centred on every other watch.
+  centred on every other watch. On touch-first watches with no physical menu
+  button (Venu X1 and siblings), swipe the on-screen action menu indicator
+  instead to reach the same menu.
 - Win Score opens a custom two-digit entry screen (tens, then ones; 00 = off),
   black-on-white with up/down arrows over the digit being edited, matching
-  the score screen instead of the system picker's white-on-dark look. When a
-  win score is set the watch buzzes on a win; when off, play continues
-  indefinitely.
+  the score screen instead of the system picker's white-on-dark look. On
+  touchscreen watches (no physical select button) it also shows an on-screen
+  OK button. When a win score is set the watch buzzes on a win; when off,
+  play continues indefinitely.
 - "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it
   off for first-to-the-win-score. Toggling the rule redraws the score screen
   right away, so it can win or reopen the current game immediately.

@@ -19,6 +19,13 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
     return true;
   }
 
+  // Swipe-to-reveal menu access on touch-first watches with no physical
+  // menu button (Venu X1 and siblings) that show the action menu indicator
+  // SimpScoreView.onShow sets. Same menu as onMenu.
+  function onActionMenu() as Boolean {
+    return onMenu();
+  }
+
   function onPreviousPage() as Boolean {
     if (_data.addHomePoint()) {
       _data.persist();

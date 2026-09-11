@@ -60,10 +60,14 @@ and both delegates. Delegates mutate the model and call
   the app lifecycle and the delegates, never from this class's own mutators, so
   `SimpScoreData` unit tests stay Storage-free.
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
-  previous-page = home point, next-page = away point, select = undo, menu =
-  push the main menu (`buildMainMenu`). Calls `_data.persist()` after each
-  change that mutated the model (write-through) and `Attention.vibrate` when a
-  point wins.
+  previous-page = home point, next-page = away point, select = undo, menu /
+  action-menu = push the main menu (`buildMainMenu`). `onActionMenu` exists
+  because touch-first watches with no physical menu button/long-press (Venu
+  X1 and siblings) have no other way to reach `onMenu` — they rely on the
+  swipe-to-reveal action menu indicator `SimpScoreView.onShow` turns on via
+  `setActionMenuIndicator` (`has`-guarded for older API levels). Calls
+  `_data.persist()` after each change that mutated the model (write-through)
+  and `Attention.vibrate` when a point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
   code): "New Game", "Win Score" (sub-label = value or "Off"), and a "Win by 2"
   `ToggleMenuItem`. Round / rectangular Menu2 centres a plain-string title
@@ -85,14 +89,19 @@ and both delegates. Delegates mutate the model and call
   `SimpScoreMenuDelegate.mc`. `WinScoreDelegate` (`BehaviorDelegate`) maps
   previous-page/next-page to bumping the focused digit (`wrapDigit`),
   select to advancing focus tens → ones → confirm, and back to ones → tens →
-  cancel. `winScoreValue` (`tens*10 + ones`, `0` → `null`) and `wrapDigit` are
+  cancel. On touchscreen devices (`isTouchScreen()`, no physical select
+  button) the view also draws an on-screen "OK" button (`okButtonBounds()`,
+  a plain function so the delegate can hit-test the same rectangle without a
+  `Dc`); `WinScoreDelegate.onTap` treats a tap inside it exactly like select.
+  `winScoreValue` (`tens*10 + ones`, `0` → `null`) and `wrapDigit` are
   file-scope helpers, kept WatchUi-free so `source-test` can reach them.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
   `AwayScoreValueLabel`, the win score (or `win_score_off_indicator` when
   `null`) into `ScoreToWinValueLabel`, and `hh:mm` (12/24h per device setting)
   into `ClockLabel`. A 20-second `Timer` started in `onShow` / stopped in
-  `onHide` keeps the clock current.
+  `onHide` keeps the clock current; `onShow` also enables the action menu
+  indicator (see `SimpScoreDelegate.mc` above).
 
 ## Resources & devices
 

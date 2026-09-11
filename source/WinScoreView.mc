@@ -1,5 +1,6 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.System;
 import Toybox.WatchUi;
 
 // Composes a two-digit win-score value; 0 means "off". Shared by the view
@@ -13,6 +14,25 @@ function winScoreValue(tens as Number, ones as Number) as Number? {
 // A digit wrapped by 1 within 0-9, used for both tens and ones.
 function wrapDigit(digit as Number, delta as Number) as Number {
   return (digit + delta + 10) % 10;
+}
+
+// Touchscreen devices (venu sq, venu x1, ...) have no physical select
+// button, so the win-score screen also draws an on-screen OK button there.
+function isTouchScreen() as Boolean {
+  return System.getDeviceSettings().isTouchScreen;
+}
+
+// OK button bounds ([x0, y0, x1, y1]) in screen coordinates. A plain
+// function (not tied to a dc) so WinScoreDelegate can hit-test a tap against
+// the same rectangle onUpdate draws, without needing a Dc of its own.
+function okButtonBounds() as Array<Number> {
+  var width = System.getDeviceSettings().screenWidth;
+  var height = System.getDeviceSettings().screenHeight;
+  var buttonWidth = width * 44 / 100;
+  var buttonHeight = height * 14 / 100;
+  var x0 = (width - buttonWidth) / 2;
+  var y0 = height * 80 / 100;
+  return [x0, y0, x0 + buttonWidth, y0 + buttonHeight];
 }
 
 // Custom win-score entry screen: replaces the stock WatchUi.Picker (see
@@ -138,5 +158,28 @@ class WinScoreView extends WatchUi.View {
       [centerX - arrowHalfWidth, textBottom + gap],
       [centerX + arrowHalfWidth, textBottom + gap],
     ] as Array<Graphics.Point2D>);
+
+    // Touchscreen devices have no physical select button, so add an
+    // on-screen OK button that does the same thing as one (see onTap in
+    // WinScoreDelegate).
+    if (isTouchScreen()) {
+      var bounds = okButtonBounds();
+      dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+      dc.fillRoundedRectangle(
+        bounds[0],
+        bounds[1],
+        bounds[2] - bounds[0],
+        bounds[3] - bounds[1],
+        (bounds[3] - bounds[1]) / 2
+      );
+      dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+      dc.drawText(
+        (bounds[0] + bounds[2]) / 2,
+        (bounds[1] + bounds[3]) / 2,
+        Graphics.FONT_TINY,
+        menuString(Rez.Strings.button_ok),
+        Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+      );
+    }
   }
 }
