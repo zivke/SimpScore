@@ -69,12 +69,24 @@ and both delegates. Delegates mutate the model and call
   `ToggleMenuItem`. Round / rectangular Menu2 centres a plain-string title
   itself; on the Instinct semi-octagons the title is a left-inset `Text`
   drawable (`insetTitle`) so it clears the sub-screen. Selecting "Win Score"
-  pushes a two-column stock `WatchUi.Picker` of `DigitPickerFactory` wheels
-  (tens, ones) — white-on-dark, the system look; on accept,
-  `WinScorePickerDelegate` computes `tens*10 + ones` (`0` → `null`) and updates
-  the sub-label in place. `menuString` / `centreTitles` / `titleInset` /
-  `insetTitle` / `winScoreSubLabel` / `buildMainMenu` / `buildWinScorePicker`
-  are file-scope helpers.
+  pushes `WinScoreView` / `WinScoreDelegate`; on confirm the pushed delegate
+  writes the value back and the sub-label is updated in place. `menuString` /
+  `centreTitles` / `titleInset` / `insetTitle` / `winScoreSubLabel` /
+  `buildMainMenu` are file-scope helpers.
+- **`source/WinScoreView.mc`** / **`source/WinScoreDelegate.mc`** — the win-score
+  entry screen: a plain `WatchUi.View` (not a `WatchUi.Picker` subclass — an
+  earlier attempt overrode `Picker.onUpdate` to draw black-on-white and fought
+  the system widget's own repaint, going fully black on instinct3amoled and
+  leaving artifacts on vivoactive3m/venusq2; a bare `View` owns the whole frame
+  itself instead) drawing two big digits, black-on-white like the score
+  screen, with up/down arrows above and below whichever digit (tens, then
+  ones) is focused — echoing the stock `Picker`'s scroll arrows. Title
+  placement reuses `centreTitles()` / `titleInset()` from
+  `SimpScoreMenuDelegate.mc`. `WinScoreDelegate` (`BehaviorDelegate`) maps
+  previous-page/next-page to bumping the focused digit (`wrapDigit`),
+  select to advancing focus tens → ones → confirm, and back to ones → tens →
+  cancel. `winScoreValue` (`tens*10 + ones`, `0` → `null`) and `wrapDigit` are
+  file-scope helpers, kept WatchUi-free so `source-test` can reach them.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
   `AwayScoreValueLabel`, the win score (or `win_score_off_indicator` when

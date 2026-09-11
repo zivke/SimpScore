@@ -14,7 +14,9 @@ yet released, so everything currently lives under Unreleased.
 - Options menu (hold Menu): New Game, Win Score, Win by 2. The menu is titled
   with the app name — left-aligned on Instinct (clearing the sub-screen),
   centred on every other watch.
-- Win Score opens a two-digit picker (tens + ones wheels); 00 = off. When a
+- Win Score opens a custom two-digit entry screen (tens, then ones; 00 = off),
+  black-on-white with up/down arrows over the digit being edited, matching
+  the score screen instead of the system picker's white-on-dark look. When a
   win score is set the watch buzzes on a win; when off, play continues
   indefinitely.
 - "Win by 2" toggle (default on): a win also requires a two-point lead. Turn it

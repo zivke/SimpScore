@@ -9,9 +9,9 @@ import Toybox.WatchUi;
 //   Win Score            <current value, or "Off">
 //   Win by 2             [toggle]
 //
-// "Win Score" opens a two-wheel number Picker (tens, ones); 00 means "off".
-// On accept the value is written to the model and the "Win Score" sub-label
-// is refreshed in place.
+// "Win Score" opens WinScoreView, a custom two-digit (tens, ones) entry
+// screen; 00 means "off". On confirm the value is written to the model and
+// the "Win Score" sub-label is refreshed in place.
 
 function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
@@ -85,57 +85,6 @@ function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
   return menu;
 }
 
-function buildWinScorePicker(data as SimpScoreData) as WatchUi.Picker {
-  var current = data.getWinAt();
-  var value = (current == null) ? 0 : current;
-
-  // Stock WatchUi.Picker (white-on-dark). An earlier black-on-white version
-  // could not clear its own background consistently across firmware, so the
-  // picker keeps the system look; only the title position tracks the menu.
-  var title = centreTitles()
-    ? new WatchUi.Text({
-        :text => menuString(Rez.Strings.menu_win_score),
-        :color => Graphics.COLOR_WHITE,
-        :font => Graphics.FONT_TINY,
-        :justification => Graphics.TEXT_JUSTIFY_CENTER,
-        :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-        :locY => WatchUi.LAYOUT_VALIGN_BOTTOM,
-      })
-    : insetTitle(menuString(Rez.Strings.menu_win_score), Graphics.COLOR_WHITE);
-
-  return new WatchUi.Picker({
-    :title => title,
-    :pattern =>
-      [new DigitPickerFactory(), new DigitPickerFactory()] as Array<WatchUi.PickerFactory>,
-    :defaults => [value / 10, value % 10] as Array<Number>,
-  });
-}
-
-// One 0-9 wheel. Two of these make the two-digit win-score picker.
-class DigitPickerFactory extends WatchUi.PickerFactory {
-  function initialize() {
-    PickerFactory.initialize();
-  }
-
-  function getSize() as Number {
-    return 10;
-  }
-
-  function getValue(index as Number) as Object? {
-    return index;
-  }
-
-  function getDrawable(index as Number, isSelected as Boolean) as Drawable? {
-    return new WatchUi.Text({
-      :text => index.toString(),
-      :color => Graphics.COLOR_WHITE,
-      :font => Graphics.FONT_NUMBER_MEDIUM,
-      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-    });
-  }
-}
-
 class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
   private var _data as SimpScoreData;
 
@@ -152,9 +101,10 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
       WatchUi.popView(WatchUi.SLIDE_DOWN);
       WatchUi.requestUpdate();
     } else if (id == :win_score) {
+      var view = new WinScoreView(_data.getWinAt());
       WatchUi.pushView(
-        buildWinScorePicker(_data),
-        new WinScorePickerDelegate(_data, item),
+        view,
+        new WinScoreDelegate(_data, view, item),
         WatchUi.SLIDE_LEFT
       );
     } else if (id == :win_by_2) {
@@ -164,33 +114,5 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
       // score screen behind the menu so it reflects the new state.
       WatchUi.requestUpdate();
     }
-  }
-}
-
-class WinScorePickerDelegate extends WatchUi.PickerDelegate {
-  private var _data as SimpScoreData;
-  private var _winScoreItem as WatchUi.MenuItem;
-
-  function initialize(data as SimpScoreData, winScoreItem as WatchUi.MenuItem) {
-    PickerDelegate.initialize();
-    _data = data;
-    _winScoreItem = winScoreItem;
-  }
-
-  function onAccept(values as Array) as Boolean {
-    var tens = values[0] as Number;
-    var ones = values[1] as Number;
-    var value = tens * 10 + ones;
-    _data.setWinAt(value == 0 ? null : value);
-    _data.persist();
-    _winScoreItem.setSubLabel(winScoreSubLabel(_data.getWinAt()));
-    WatchUi.popView(WatchUi.SLIDE_DOWN);
-    WatchUi.requestUpdate();
-    return true;
-  }
-
-  function onCancel() as Boolean {
-    WatchUi.popView(WatchUi.SLIDE_DOWN);
-    return true;
   }
 }

@@ -11,7 +11,7 @@
         <layout id="MainLayout">
             <drawable id="backdrop" />
 
-            <label id="ClockLabel" text="XX:XX" x="50%" y="11" color="Graphics.COLOR_WHITE"
+            <label id="ClockLabel" text="XX:XX" x="45%" y="11" color="Graphics.COLOR_WHITE"
                 font="Graphics.FONT_XTINY"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 

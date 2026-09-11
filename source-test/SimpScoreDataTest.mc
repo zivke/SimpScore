@@ -243,6 +243,21 @@ function restoreOnEmptyStorageKeepsDefaults(logger as Test.Logger) as Boolean {
 }
 
 (:test)
+function winScoreValueComposesTensAndOnes(logger as Test.Logger) as Boolean {
+  return winScoreValue(2, 1) == 21 && winScoreValue(0, 7) == 7;
+}
+
+(:test)
+function winScoreValueZeroMeansOff(logger as Test.Logger) as Boolean {
+  return winScoreValue(0, 0) == null;
+}
+
+(:test)
+function wrapDigitWrapsAtBothEnds(logger as Test.Logger) as Boolean {
+  return wrapDigit(9, 1) == 0 && wrapDigit(0, -1) == 9;
+}
+
+(:test)
 function persistRoundTripsWinScoreOff(logger as Test.Logger) as Boolean {
   clearPersisted();
   var a = new SimpScoreData();
