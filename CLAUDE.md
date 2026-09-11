@@ -123,7 +123,7 @@ and both delegates. Delegates mutate the model and call
   Adding one means editing `iq:products` (VS Code palette "Monkey C: Edit
   Products", or by hand) and downloading that device; check it renders with
   `make build DEVICE=<id>` and a sim screenshot.
-- **Never change `manifest.xml`'s `id`** (`734088d3-…`) — it is the published
+- **Never change `manifest.xml`'s `id`** (`a3a03d94-…`) — it is the published
   app's identity. The "generated file, do not edit" banner refers to
   hand-editing; the palette commands are the supported way to change it.
 
