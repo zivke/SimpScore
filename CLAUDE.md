@@ -70,13 +70,22 @@ and both delegates. Delegates mutate the model and call
   and `Attention.vibrate` when a point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
   code): "New Game", "Win Score" (sub-label = value or "Off"), and a "Win by 2"
-  `ToggleMenuItem`. Round / rectangular Menu2 centres a plain-string title
-  itself; on the Instinct semi-octagons the title is a left-inset `Text`
-  drawable (`insetTitle`) so it clears the sub-screen. Selecting "Win Score"
+  `ToggleMenuItem`. The title is a plain string on every shape, including
+  Instinct — a custom left-inset `Text` drawable was tried there to clear
+  the sub-screen, but a real Instinct 2 showed it overlapping the sub-screen
+  anyway (the same class of bug `c09f72d` had already hit and reverted for
+  round/rectangular's `HALIGN_CENTER` title, and the simulator didn't catch
+  either time); letting the system position the title is what actually holds
+  up on hardware. `buildMainMenu` omits `:icon` on devices with a physical
+  sub-screen (`hasSubscreen()`, `has`-guarded — `WatchUi.getSubscreen()` is
+  API 3.2.7 vs. this app's 3.2.0 minimum): a real Instinct 2 showed the
+  launcher icon glitching on that hardware, since `:icon` is only used (and
+  rendered on the sub-screen itself) on such devices. Selecting "Win Score"
   pushes `WinScoreView` / `WinScoreDelegate`; on confirm the pushed delegate
-  writes the value back and the sub-label is updated in place. `menuString` /
-  `centreTitles` / `titleInset` / `insetTitle` / `winScoreSubLabel` /
-  `buildMainMenu` are file-scope helpers.
+  writes the value back and the sub-label is updated in place. `centreTitles`
+  / `titleInset` are now only used by `WinScoreView`'s own title placement.
+  `menuString` / `winScoreSubLabel` / `hasSubscreen` / `buildMainMenu` are
+  file-scope helpers.
 - **`source/WinScoreView.mc`** / **`source/WinScoreDelegate.mc`** — the win-score
   entry screen: a plain `WatchUi.View` (not a `WatchUi.Picker` subclass — an
   earlier attempt overrode `Picker.onUpdate` to draw black-on-white and fought

@@ -17,31 +17,22 @@ function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
 }
 
-// Instinct-style watches have a physical sub-screen; there the menu / picker
-// titles stay left-inset (the score screen is off-centre too). Every other
-// watch centres them.
+// Instinct-style watches have a physical sub-screen; WinScoreView's title
+// stays left-inset there (the score screen is off-centre too) to clear it.
+// Every other watch centres it. The options menu itself uses a system-
+// positioned plain-string title on every shape (see buildMainMenu) — a
+// custom Text-drawable title didn't hold up on real hardware (c09f72d had
+// already reverted this for round/rectangular; a real Instinct 2 then
+// showed the same class of bug: the title overlapping the sub-screen
+// despite the simulator measuring a clear gap).
 function centreTitles() as Boolean {
   return System.getDeviceSettings().screenShape != System.SCREEN_SHAPE_SEMI_OCTAGON;
 }
 
-// Left inset for menu / picker titles: 6% of the screen width, so the text
-// sits just off the edge rather than flush against it.
+// Left inset for WinScoreView's title on Instinct: 6% of the screen width,
+// so the text sits just off the edge rather than flush against it.
 function titleInset() as Number {
   return System.getDeviceSettings().screenWidth * 6 / 100;
-}
-
-// A left-inset Text drawable for a menu / picker title on Instinct, where the
-// score screen is left-of-centre too (to clear the sub-screen). Used only when
-// centreTitles() is false.
-function insetTitle(text as String, color as Graphics.ColorType) as WatchUi.Text {
-  return new WatchUi.Text({
-    :text => text,
-    :color => color,
-    :font => Graphics.FONT_TINY,
-    :justification => Graphics.TEXT_JUSTIFY_LEFT,
-    :locX => titleInset(),
-    :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-  });
 }
 
 function winScoreSubLabel(winAt as Number?) as String {
@@ -51,17 +42,24 @@ function winScoreSubLabel(winAt as Number?) as String {
   return winAt.toString();
 }
 
+// Menu2's :icon option is only used on devices with a physical sub-screen
+// (per the SDK docs), where it's rendered on that sub-screen's own hardware.
+// Reported on a real Instinct 2: our launcher icon glitches there, so
+// buildMainMenu omits :icon entirely rather than risk it looking broken.
+// `has`-guarded: getSubscreen() is API 3.2.7, this app's minApiLevel is
+// 3.2.0.
+function hasSubscreen() as Boolean {
+  return (WatchUi has :getSubscreen) && (WatchUi.getSubscreen() != null);
+}
+
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
-  // Round / rectangular Menu2 centres a plain-string title itself; Instinct's
-  // narrow title area needs a left-inset Text drawable to clear the sub-screen
-  // (and a bare string wraps mid-word there). :icon is also set for the
-  // sub-window on devices that use it.
-  var menu = new WatchUi.Menu2({
-    :title => centreTitles()
-      ? menuString(Rez.Strings.AppName)
-      : insetTitle(menuString(Rez.Strings.AppName), Graphics.COLOR_WHITE),
-    :icon => Rez.Drawables.LauncherIcon,
-  });
+  // Plain string on every shape, including Instinct (see centreTitles()
+  // above for why).
+  var title = menuString(Rez.Strings.AppName);
+
+  var menu = hasSubscreen()
+    ? new WatchUi.Menu2({ :title => title })
+    : new WatchUi.Menu2({ :title => title, :icon => Rez.Drawables.LauncherIcon });
   menu.addItem(
     new WatchUi.MenuItem(menuString(Rez.Strings.menu_new_game), null, :new_game, null)
   );
