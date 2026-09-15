@@ -28,6 +28,11 @@ The screen stays on the score the whole time the app is open.
 Undo steps back through every point, in order, as many times as you press it —
 not just the last one.
 
+On watches with a touchscreen and no physical MENU button, touch and hold
+anywhere on the screen to open the options menu instead. A few touch watches
+(Venu X1 and similar) show a swipe indicator at the edge of the screen for the
+same thing.
+
 When a side reaches the win score the watch buzzes and further points are
 ignored until you start a new game.
 
@@ -49,6 +54,9 @@ any target from 1 to 99.
 - **START** moves to the next wheel, then confirms.
 - **BACK** cancels.
 
+On touchscreen watches with no physical START button, tap the on-screen **OK**
+button instead.
+
 Set both wheels to **0** for **Off** — no target, play continues indefinitely.
 The current value (or `Off`) is shown next to "Win Score" in the menu and in
 the round sub‑window on the score screen.
@@ -67,8 +75,10 @@ Has no effect while the win score is Off.
 ## Saving
 
 Everything — the score, the full undo history, the win score and the Win‑by‑2
-setting — is saved automatically. Leave the app or restart the watch and it
-comes back exactly where you left it.
+setting — is saved when you leave the app, and comes back exactly where you
+left it next time you open it. If the watch loses power or the app is
+otherwise closed unexpectedly rather than being left normally, whatever game
+was in progress is not saved.
 
 ## Supported watches
 
