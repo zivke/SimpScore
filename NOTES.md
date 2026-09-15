@@ -1,4 +1,6 @@
-## TODO
+# TODO
+
+## Solved
 
 - win-score picker: the "Win Score" title clips off the left edge — finish
   tidying its placement (mid-edit: trying LAYOUT_HALIGN_LEFT).
@@ -13,7 +15,9 @@
 - stopwatch on the main screen (long-press up/down for start / stop / reset).
   Skipped for now; revisit if wanted.
 
-## Problems
+# Problems
+
+## Solved
 
 Fixed and confirmed in the simulator (venu2, instinct2, fenix7, d2mach2,
 venux1, instinctcrossover) — see changelog.md for the user-visible
@@ -52,7 +56,7 @@ what's listed below:
   iteration where parking alone turned out insufficient and the number
   itself had to move.
 
-Still open:
+## Still open:
 
 - fr970, marqgolfer (and maybe others also) - the up button stops working
   sometimes until another action is done. Happens even early in a fresh,
@@ -66,4 +70,3 @@ Still open:
   common to nearly every physical-button device this app supports, not just
   these two, so device-specific testing won't isolate it further. Couldn't
   reproduce or fix from app code without real hardware.
-
