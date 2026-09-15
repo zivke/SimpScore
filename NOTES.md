@@ -66,9 +66,4 @@ Still open:
   common to nearly every physical-button device this app supports, not just
   these two, so device-specific testing won't isolate it further. Couldn't
   reproduce or fix from app code without real hardware.
-- instinct2x - menu title partially hidden by the small round sub-display.
-  instinct2x's simulator.json has byte-identical `display`/`subscreen`
-  geometry to instinct2, so the simulator can't distinguish it from
-  instinct2 at all — the menu-title fix above likely fixes this too, but it
-  needs a real-hardware check to confirm since the simulator can't show it.
 
