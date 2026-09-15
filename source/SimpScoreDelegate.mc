@@ -39,11 +39,11 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
     return onMenu();
   }
 
+  // Not persisted here: SimpScoreData is only ever written to Storage once,
+  // in SimpScoreApp.onStop(), to keep flash writes off the button-press path
+  // (see SimpScoreData.persist()).
   function onPreviousPage() as Boolean {
     var changed = _data.addHomePoint();
-    if (changed) {
-      _data.persist();
-    }
     WatchUi.requestUpdate();
     if (changed && _data.checkWin()) {
       vibrate();
@@ -53,9 +53,6 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
 
   function onNextPage() as Boolean {
     var changed = _data.addAwayPoint();
-    if (changed) {
-      _data.persist();
-    }
     WatchUi.requestUpdate();
     if (changed && _data.checkWin()) {
       vibrate();
@@ -64,9 +61,7 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
   }
 
   function onSelect() as Boolean {
-    if (_data.undoLastAction()) {
-      _data.persist();
-    }
+    _data.undoLastAction();
     WatchUi.requestUpdate();
     return true;
   }

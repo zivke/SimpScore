@@ -44,7 +44,9 @@ Never install or regenerate them. Everything goes through the `Makefile`
 `SimpScoreApp` creates one `SimpScoreData` model and injects it into the view
 and both delegates. Delegates mutate the model and call
 `WatchUi.requestUpdate()`; the view reads the model back on `onUpdate`.
-`SimpScoreApp.onStart` restores persisted state and `onStop` saves it.
+`SimpScoreApp.onStart` restores persisted state and `onStop` saves it —
+persistence happens **only** on app exit, nowhere else (see `persist()`
+below).
 
 - **`source/SimpScoreData.mc`** — the model, no UI. Holds `_homeScore`,
   `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score),
@@ -54,10 +56,18 @@ and both delegates. Delegates mutate the model and call
   when `_winBy2` — lead by more than one point. `addHomePoint` / `addAwayPoint`
   become no-ops after a win. The three mutators (`addHomePoint`, `addAwayPoint`,
   `undoLastAction`) return a `Boolean` — whether they actually changed anything
-  — so the delegates can skip a redundant `persist()` on a no-op press.
-  `reset()` re-runs `initialize()` (which leaves the settings alone). `persist()` / `restore()` move the five fields to/from
-  `Application.Storage` (win score as `0` = off); they are **only** called from
-  the app lifecycle and the delegates, never from this class's own mutators, so
+  — so `SimpScoreDelegate` can skip a redundant win-buzz check on a no-op
+  press. `reset()` re-runs `initialize()` (which leaves the settings alone).
+  `persist()` / `restore()` move all five fields to/from
+  `Application.Storage` (win score as `0` = off); `persist()` is called
+  **only** from `SimpScoreApp.onStop`, not after individual points, undos, or
+  menu changes — a real device's flash write is slow enough to show up as
+  input lag on every single button press (rewriting the win-score settings
+  and re-serializing the whole, unbounded actions array each time), even
+  though it's free against the simulator's filesystem-backed Storage. The
+  deliberate tradeoff: a game in progress is lost if the app is killed
+  uncleanly (crash, low-battery shutdown, force-kill) rather than exited
+  normally. Neither method is called from this class's own mutators, so
   `SimpScoreData` unit tests stay Storage-free.
 - **`source/SimpScoreDelegate.mc`** (`BehaviorDelegate`) — input mapping:
   previous-page = home point, next-page = away point, select = undo, menu /
@@ -65,9 +75,9 @@ and both delegates. Delegates mutate the model and call
   because touch-first watches with no physical menu button/long-press (Venu
   X1 and siblings) have no other way to reach `onMenu` — they rely on the
   swipe-to-reveal action menu indicator `SimpScoreView.onShow` turns on via
-  `setActionMenuIndicator` (`has`-guarded for older API levels). Calls
-  `_data.persist()` after each change that mutated the model (write-through)
-  and `Attention.vibrate` when a point wins.
+  `setActionMenuIndicator` (`has`-guarded for older API levels). Does not
+  persist (see `SimpScoreData.persist()`); calls `Attention.vibrate` when a
+  point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
   code): "New Game", "Win Score" (sub-label = value or "Off"), and a "Win by 2"
   `ToggleMenuItem`. The title is a plain string on every shape, including
@@ -144,7 +154,10 @@ and both delegates. Delegates mutate the model and call
 - Update `changelog.md` (Keep a Changelog, everything under Unreleased until
   the first store release) for any user-visible change; update `README.md`'s
   supported-devices list when products change.
-- `SimpScoreData` is pure logic apart from the explicit `persist()` / `restore()`
-  methods — don't call `Storage` from its mutators, so the tests stay isolated.
+- `SimpScoreData` is pure logic apart from the explicit `persist()` /
+  `restore()` methods — don't call `Storage` from its mutators, so the tests
+  stay isolated. `persist()` is called only from `SimpScoreApp.onStop`,
+  deliberately not after individual actions (see `SimpScoreData.mc`) — don't
+  reintroduce per-action persistence without revisiting that tradeoff.
   Add a `(:test)` case in `source-test/SimpScoreDataTest.mc` when you change
   scoring, undo, win, or persistence rules.

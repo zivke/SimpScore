@@ -97,7 +97,6 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
     var id = item.getId();
     if (id == :new_game) {
       _data.reset();
-      _data.persist();
       WatchUi.popView(WatchUi.SLIDE_DOWN);
       WatchUi.requestUpdate();
     } else if (id == :win_score) {
@@ -109,7 +108,6 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
       );
     } else if (id == :win_by_2) {
       _data.setWinBy2((item as WatchUi.ToggleMenuItem).isEnabled());
-      _data.persist();
       // The rule change can win or un-win the current game; redraw the
       // score screen behind the menu so it reflects the new state.
       WatchUi.requestUpdate();

@@ -73,7 +73,6 @@ class WinScoreDelegate extends WatchUi.BehaviorDelegate {
 
   private function confirm() as Void {
     _data.setWinAt(winScoreValue(_view.getTens(), _view.getOnes()));
-    _data.persist();
     _winScoreItem.setSubLabel(winScoreSubLabel(_data.getWinAt()));
     WatchUi.popView(WatchUi.SLIDE_DOWN);
     WatchUi.requestUpdate();

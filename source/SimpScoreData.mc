@@ -36,9 +36,18 @@ class SimpScoreData {
     initialize();
   }
 
-  // Persistence. Deliberately not called by this class's own mutators: the app
-  // lifecycle (onStart/onStop) and the input delegates drive it, so unit tests
-  // that exercise the model never touch Storage. Win score persists as 0 = off.
+  // Persistence. Deliberately not called by this class's own mutators: only
+  // the app lifecycle (onStop) drives it, so unit tests that exercise the
+  // model never touch Storage. Win score persists as 0 = off.
+  //
+  // Called only on app exit, not after every point/undo/menu change: a real
+  // device's flash write is slow enough to show up as input lag on every
+  // single button press (rewriting the win-score settings and
+  // re-serializing the whole, unbounded actions array each time), even
+  // though it's free against the simulator's filesystem-backed Storage. The
+  // deliberate tradeoff is that a game in progress is lost if the app is
+  // killed uncleanly (crash, low-battery shutdown, force-kill) rather than
+  // exited normally, in exchange for no per-press write cost at all.
   function persist() as Void {
     Storage.setValue(STORAGE_HOME, _homeScore);
     Storage.setValue(STORAGE_AWAY, _awayScore);

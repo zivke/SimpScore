@@ -57,3 +57,9 @@ yet released, so everything currently lives under Unreleased.
   restore them to system time on exit. The win-score number is also moved
   down on these watches, since parking the hands doesn't move the fixed
   physical hub they pivot on.
+- Adding or undoing a point, and menu changes, had a noticeable lag on real
+  hardware, from writing to flash storage on every single one. The score,
+  undo history and settings are now only saved once, on exiting the app,
+  instead of after every action — a deliberate tradeoff of losing an
+  in-progress game on an unclean exit (crash, low battery, force-kill) for
+  no per-action write cost.
