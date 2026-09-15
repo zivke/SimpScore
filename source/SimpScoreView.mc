@@ -31,6 +31,16 @@ class SimpScoreView extends WatchUi.View {
     if (self has :setActionMenuIndicator) {
       setActionMenuIndicator({ :enabled => true });
     }
+
+    // Hybrid analog-digital watches (Instinct Crossover and siblings)
+    // overlay real physical hands on top of the whole digital area, right
+    // through the middle of this layout. Park them out of the way while the
+    // score screen is up; onHide puts them back on system time. Guarded
+    // with `has`: setClockHandPosition is API 3.3.0, this app's minimum is
+    // 3.2.0, and non-hybrid devices don't have it at all.
+    if (self has :setClockHandPosition) {
+      setClockHandPosition({ :clockState => WatchUi.ANALOG_CLOCK_STATE_RESTING });
+    }
   }
 
   function onClockTick() as Void {
@@ -95,6 +105,10 @@ class SimpScoreView extends WatchUi.View {
     if (_clockTimer != null) {
       _clockTimer.stop();
       _clockTimer = null;
+    }
+
+    if (self has :setClockHandPosition) {
+      setClockHandPosition({ :clockState => WatchUi.ANALOG_CLOCK_STATE_SYSTEM_TIME });
     }
   }
 }

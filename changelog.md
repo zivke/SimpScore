@@ -51,3 +51,9 @@ yet released, so everything currently lives under Unreleased.
   round screens.
 - The Win Score entry screen's title sat too close to the top edge on
   semi-octagon (Instinct) screens; moved it down.
+- On hybrid analog-digital watches (Instinct Crossover and siblings), the
+  physical clock hands overlaid the whole score screen and win-score entry
+  screen. Both now park the hands out of the way while they're showing, and
+  restore them to system time on exit. The win-score number is also moved
+  down on these watches, since parking the hands doesn't move the fixed
+  physical hub they pivot on.

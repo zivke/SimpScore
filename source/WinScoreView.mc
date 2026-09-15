@@ -61,6 +61,23 @@ class WinScoreView extends WatchUi.View {
     return _ones;
   }
 
+  // Hybrid analog-digital watches (Instinct Crossover and siblings) overlay
+  // real physical hands across the whole digital area, right through the
+  // big tens/ones digits. Park them out of the way while this screen is up
+  // (SimpScoreView does the same for the score screen); `has`-guarded since
+  // setClockHandPosition is API 3.3.0 and non-hybrid devices don't have it.
+  function onShow() as Void {
+    if (self has :setClockHandPosition) {
+      setClockHandPosition({ :clockState => WatchUi.ANALOG_CLOCK_STATE_RESTING });
+    }
+  }
+
+  function onHide() as Void {
+    if (self has :setClockHandPosition) {
+      setClockHandPosition({ :clockState => WatchUi.ANALOG_CLOCK_STATE_SYSTEM_TIME });
+    }
+  }
+
   function bumpFocused(delta as Number) as Void {
     if (_focusOnes) {
       _ones = wrapDigit(_ones, delta);
@@ -127,7 +144,15 @@ class WinScoreView extends WatchUi.View {
     var font = Graphics.FONT_NUMBER_HOT;
     var textDims = dc.getTextDimensions(text, font);
     var textWidth = textDims[0];
-    var textY = height / 2;
+
+    // Hybrid analog-digital watches (Instinct Crossover and siblings) have
+    // a physical hand hub fixed dead-centre on the screen. Parking the
+    // hands (see onShow/onHide) moves the hands themselves out of the way,
+    // but not the hub they pivot on — it still sits right on top of a
+    // centred number, so push the number down below it here instead. Same
+    // `has`-check as onShow/onHide: only devices with real analog hands
+    // implement setClockHandPosition at all.
+    var textY = (self has :setClockHandPosition) ? height * 68 / 100 : height / 2;
     dc.drawText(
       width / 2,
       textY,
