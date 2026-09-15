@@ -13,10 +13,10 @@
                 font="Graphics.FONT_XTINY"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 
-            <label id="WinScoreTextLabel" text="@Strings.label_win_target" x="50%" y="21%"
+            <label id="WinScoreTextLabel" text="@Strings.label_win_target" x="50%" y="19%"
                 color="Graphics.COLOR_BLACK" font="Graphics.FONT_XTINY"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
-            <label id="ScoreToWinValueLabel" text="21" x="50%" y="31%"
+            <label id="ScoreToWinValueLabel" text="21" x="50%" y="34%"
                 font="Graphics.FONT_NUMBER_MILD" color="Graphics.COLOR_BLACK"
                 justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" />
 

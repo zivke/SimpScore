@@ -10,6 +10,11 @@
          instead and does not show this. -->
     <string id="label_win_target">WIN</string>
 
+    <!-- Options-menu title. Deliberately not the app name: "SimpScore" wraps
+         to two lines on the narrower semi-octagon screens (instinct2 and
+         siblings), pushing the item list down and clipping it. -->
+    <string id="menu_title">Menu</string>
+
     <string id="menu_new_game">New Game</string>
     <string id="menu_win_score">Win Score</string>
     <string id="menu_win_score_off">Off</string>

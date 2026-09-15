@@ -54,8 +54,10 @@ function hasSubscreen() as Boolean {
 
 function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
   // Plain string on every shape, including Instinct (see centreTitles()
-  // above for why).
-  var title = menuString(Rez.Strings.AppName);
+  // above for why). Not the app name: "SimpScore" wraps to two lines on the
+  // narrower semi-octagon screens, pushing the item list down and clipping
+  // it (a real Instinct 2 showed this).
+  var title = menuString(Rez.Strings.menu_title);
 
   var menu = hasSubscreen()
     ? new WatchUi.Menu2({ :title => title })

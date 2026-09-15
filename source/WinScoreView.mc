@@ -100,11 +100,10 @@ class WinScoreView extends WatchUi.View {
     // elsewhere convention as the menu and the old picker (centreTitles() /
     // titleInset(), from SimpScoreMenuDelegate.mc) so it clears the physical
     // sub-screen on the semi-octagon watches.
-    var titleY = height * 12 / 100;
     if (centreTitles()) {
       dc.drawText(
         width / 2,
-        titleY,
+        height * 12 / 100,
         Graphics.FONT_TINY,
         menuString(Rez.Strings.menu_win_score),
         Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
@@ -112,10 +111,12 @@ class WinScoreView extends WatchUi.View {
     } else {
       // A little further right than titleInset() alone: this screen's title
       // sits over blank space (no sub-screen circle to clear at this height),
-      // so it can sit closer to centre than the menu title does.
+      // so it can sit closer to centre than the menu title does. Lower than
+      // the centred title too: on the semi-octagon watches it read as too
+      // close to the top edge.
       dc.drawText(
         titleInset() + width * 4 / 100,
-        titleY,
+        height * 18 / 100,
         Graphics.FONT_TINY,
         menuString(Rez.Strings.menu_win_score),
         Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER

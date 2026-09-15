@@ -26,23 +26,38 @@ class SimpScoreDelegate extends WatchUi.BehaviorDelegate {
     return onMenu();
   }
 
+  // Touch-and-hold on the screen also opens the menu. This is the only menu
+  // access on touch-first watches with no physical menu button whose API
+  // level predates setActionMenuIndicator/onActionMenu (e.g. venu2, venu3,
+  // vivoactive5, d2air, vivoactive4 — real devices reported "no menu, no
+  // button for that"): WatchUi.InputDelegate.onHold is a raw touch event
+  // available since API 1.0.0, so it doesn't depend on that support.
+  function onHold(clickEvent as WatchUi.ClickEvent) as Boolean {
+    if (!isTouchScreen()) {
+      return false;
+    }
+    return onMenu();
+  }
+
   function onPreviousPage() as Boolean {
-    if (_data.addHomePoint()) {
+    var changed = _data.addHomePoint();
+    if (changed) {
       _data.persist();
     }
     WatchUi.requestUpdate();
-    if (_data.checkWin()) {
+    if (changed && _data.checkWin()) {
       vibrate();
     }
     return true;
   }
 
   function onNextPage() as Boolean {
-    if (_data.addAwayPoint()) {
+    var changed = _data.addAwayPoint();
+    if (changed) {
       _data.persist();
     }
     WatchUi.requestUpdate();
-    if (_data.checkWin()) {
+    if (changed && _data.checkWin()) {
       vibrate();
     }
     return true;
