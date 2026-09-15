@@ -194,6 +194,55 @@ function winByTwoOnStillNeedsMargin(logger as Test.Logger) as Boolean {
 }
 
 (:test)
+function awaySideAlsoNeedsTwoPointMargin(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(5);
+  // Mirror of winNeedsTwoPointMargin, with away leading instead of home.
+  var toAway = [true, false, true, false, true, false, true, false, true];
+  for (var i = 0; i < toAway.size(); i++) {
+    if (toAway[i]) { data.addAwayPoint(); } else { data.addHomePoint(); }
+  }
+  if (data.getAwayScore() != 5 || data.getHomeScore() != 4) { return false; }
+  if (data.checkWin()) { return false; } // 4-5 is not a win
+  data.addAwayPoint();                    // 4-6
+  return data.checkWin();                 // now it is
+}
+
+(:test)
+function winByTwoToggleMidGameCanWinImmediately(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(5);
+  data.setWinBy2(true);
+  playToFiveFour(data); // 5-4, no margin yet
+  if (data.checkWin()) { return false; }
+  data.setWinBy2(false); // rule relaxed mid-game -> 5-4 is now a win
+  return data.checkWin();
+}
+
+(:test)
+function winAtChangeMidGameReopensWonGame(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(2);
+  data.addHomePoint();
+  data.addHomePoint(); // 2-0 -> won
+  if (!data.checkWin()) { return false; }
+  data.setWinAt(5); // target raised -> game reopens
+  return !data.checkWin();
+}
+
+(:test)
+function winAtChangeMidGameCanInstantlyWin(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(10);
+  for (var i = 0; i < 5; i++) {
+    data.addHomePoint(); // 5-0
+  }
+  if (data.checkWin()) { return false; }
+  data.setWinAt(5); // already past the lowered target, with margin
+  return data.checkWin();
+}
+
+(:test)
 function persistRoundTripsWinByTwo(logger as Test.Logger) as Boolean {
   clearPersisted();
   var a = new SimpScoreData();

@@ -17,16 +17,19 @@ function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
 }
 
-// Instinct-style watches have a physical sub-screen; WinScoreView's title
-// stays left-inset there (the score screen is off-centre too) to clear it.
-// Every other watch centres it. The options menu itself uses a system-
-// positioned plain-string title on every shape (see buildMainMenu) — a
-// custom Text-drawable title didn't hold up on real hardware (c09f72d had
-// already reverted this for round/rectangular; a real Instinct 2 then
-// showed the same class of bug: the title overlapping the sub-screen
-// despite the simulator measuring a clear gap).
+// Watches with a physical sub-screen have WinScoreView's title stay
+// left-inset there (the score screen is off-centre too) to clear it. Every
+// other watch centres it. Deliberately keyed on hasSubscreen() below, not
+// screen shape: instinct3amoled45mm/50mm report a round shape but still
+// have a real sub-screen, so a shape check centred the title right over it.
+// The options menu itself uses a system-positioned plain-string title on
+// every shape (see buildMainMenu) — a custom Text-drawable title didn't
+// hold up on real hardware (c09f72d had already reverted this for
+// round/rectangular; a real Instinct 2 then showed the same class of bug:
+// the title overlapping the sub-screen despite the simulator measuring a
+// clear gap).
 function centreTitles() as Boolean {
-  return System.getDeviceSettings().screenShape != System.SCREEN_SHAPE_SEMI_OCTAGON;
+  return !hasSubscreen();
 }
 
 // Left inset for WinScoreView's title on Instinct: 6% of the screen width,

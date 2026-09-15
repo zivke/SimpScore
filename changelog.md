@@ -63,3 +63,8 @@ yet released, so everything currently lives under Unreleased.
   instead of after every action — a deliberate tradeoff of losing an
   in-progress game on an unclean exit (crash, low battery, force-kill) for
   no per-action write cost.
+- The Win Score entry screen's title was centred instead of left-inset on
+  instinct3amoled45mm/50mm, sitting on top of their sub-screen — those two
+  watches report a round screen shape even though they have a physical
+  sub-screen like the rest of the Instinct family, and the title placement
+  was keyed off screen shape instead of sub-screen presence.
