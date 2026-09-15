@@ -16,7 +16,10 @@
 ## Problems
 
 Fixed and confirmed in the simulator (venu2, instinct2, fenix7, d2mach2,
-venux1) — see changelog.md for the user-visible descriptions:
+venux1, instinctcrossover) — see changelog.md for the user-visible
+descriptions. A 20-device manual pass (one representative per shape/touch/
+API/sub-screen combination in the manifest) turned up nothing else beyond
+what's listed below:
 
 - d2air, d2airx10, legacyherocaptainmarvel, legacyherofirstavenger,
   legacysagadarthvader, legacysagarey, venu, venud, venu2, venu2plus,
@@ -38,6 +41,16 @@ venux1) — see changelog.md for the user-visible descriptions:
 - Win Score entry screen: on semi-octagon (Instinct) devices the title sat
   too close to the top edge. Moved it down (WinScoreView.mc, the left-inset
   branch only). Confirmed on instinct2.
+- Hybrid analog-digital watches (Instinct Crossover and siblings) overlay
+  real physical clock hands across the whole digital area — found during
+  the 20-device pass, wasn't in the original list. `View.setClockHandPosition`
+  (API 3.3.0) now parks the hands while the score screen or win-score screen
+  is up, restoring them on hide. Parking doesn't move the fixed physical hub
+  the hands pivot on though, which still sat on a dead-centre number — the
+  win-score digits are also pushed down (to 68% of screen height) on these
+  devices specifically. Confirmed on instinctcrossover, including the
+  iteration where parking alone turned out insufficient and the number
+  itself had to move.
 
 Still open:
 
