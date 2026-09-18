@@ -45,12 +45,14 @@ class WinScoreView extends WatchUi.View {
   private var _tens as Number;
   private var _ones as Number;
   private var _focusOnes as Boolean = false;
+  private var _countDown as Boolean;
 
-  function initialize(current as Number?) {
+  function initialize(current as Number?, countDown as Boolean) {
     View.initialize();
     var value = (current == null) ? 0 : current;
     self._tens = value / 10;
     self._ones = value % 10;
+    self._countDown = countDown;
   }
 
   function getTens() as Number {
@@ -122,7 +124,7 @@ class WinScoreView extends WatchUi.View {
         width / 2,
         height * 12 / 100,
         Graphics.FONT_TINY,
-        menuString(Rez.Strings.menu_win_score),
+        winScoreMenuLabel(_countDown),
         Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
       );
     } else {
@@ -135,7 +137,7 @@ class WinScoreView extends WatchUi.View {
         titleInset() + width * 4 / 100,
         height * 18 / 100,
         Graphics.FONT_TINY,
-        menuString(Rez.Strings.menu_win_score),
+        winScoreMenuLabel(_countDown),
         Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
       );
     }

@@ -7,6 +7,8 @@ board games, anything with a **home** and an **away** side.
 - undo the last point (full history, not just the last one)
 - optional win score, set with a two-digit picker (00 = off)
 - "win by 2" rule, toggleable
+- "Count Down" mode: count down to zero instead of up to a target, for games
+  like Magic: the Gathering life totals or darts 301/501
 - time of day on the score screen
 - new game / reset from the options menu
 - one score screen, one menu

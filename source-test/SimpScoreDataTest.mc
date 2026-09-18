@@ -94,7 +94,7 @@ function winAtIsConfigurable(logger as Test.Logger) as Boolean {
 (:test)
 function freshDataHasDefaultSettings(logger as Test.Logger) as Boolean {
   var data = new SimpScoreData();
-  return data.getWinAt() == 7 && data.getWinBy2() == true;
+  return data.getWinAt() == 7 && data.getWinBy2() == true && data.getCountDown() == false;
 }
 
 (:test)
@@ -240,6 +240,105 @@ function winAtChangeMidGameCanInstantlyWin(logger as Test.Logger) as Boolean {
   if (data.checkWin()) { return false; }
   data.setWinAt(5); // already past the lowered target, with margin
   return data.checkWin();
+}
+
+(:test)
+function countDownStartsAtWinScore(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(20);
+  data.setCountDown(true);
+  data.reset(); // starting scores are only computed on (re)initialize
+  return data.getHomeScore() == 20 && data.getAwayScore() == 20;
+}
+
+(:test)
+function countDownPointsSubtract(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(20);
+  data.setCountDown(true);
+  data.reset();
+  data.addHomePoint();
+  data.addHomePoint();
+  data.addAwayPoint();
+  return data.getHomeScore() == 18 && data.getAwayScore() == 19;
+}
+
+(:test)
+function countDownWinsTheInstantEitherSideHitsZero(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(2);
+  data.setCountDown(true);
+  data.reset(); // 2-2
+  data.addHomePoint(); // 1-2
+  if (data.checkWin()) { return false; }
+  data.addHomePoint(); // 0-2
+  return data.checkWin();
+}
+
+// The core reason this mode exists: win by 2 has no meaning when each side
+// falls toward its own zero independently, so it must never affect checkWin()
+// here. Same scenario as countDownWinsTheInstantEitherSideHitsZero, with
+// winBy2 explicitly off, reaching the identical result.
+(:test)
+function countDownIgnoresWinByTwo(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(2);
+  data.setWinBy2(false);
+  data.setCountDown(true);
+  data.reset(); // 2-2
+  data.addHomePoint(); // 1-2
+  if (data.checkWin()) { return false; }
+  data.addHomePoint(); // 0-2
+  return data.checkWin();
+}
+
+(:test)
+function countDownPointsIgnoredAfterWinAndScoreNeverNegative(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(1);
+  data.setCountDown(true);
+  data.reset(); // 1-1
+  data.addHomePoint(); // 0-1 -> won
+  data.addHomePoint(); // ignored
+  return data.getHomeScore() == 0 && data.getAwayScore() == 1;
+}
+
+(:test)
+function countDownUndoAddsPointBack(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(20);
+  data.setCountDown(true);
+  data.reset();
+  data.addHomePoint(); // 19-20
+  data.undoLastAction(); // 20-20
+  return data.getHomeScore() == 20 && data.getAwayScore() == 20;
+}
+
+(:test)
+function countDownWithWinScoreOffNeverWins(logger as Test.Logger) as Boolean {
+  var data = new SimpScoreData();
+  data.setWinAt(null);
+  data.setCountDown(true);
+  data.reset(); // starts at 0, no floor
+  for (var i = 0; i < 40; i++) {
+    data.addHomePoint();
+  }
+  return data.getHomeScore() == -40 && !data.checkWin();
+}
+
+(:test)
+function persistRoundTripsCountDown(logger as Test.Logger) as Boolean {
+  clearPersisted();
+  var a = new SimpScoreData();
+  a.setCountDown(true);
+  a.persist();
+
+  var b = new SimpScoreData();
+  b.restore();
+  var ok = b.getCountDown() == true;
+
+  clearPersisted();
+  return ok;
 }
 
 (:test)

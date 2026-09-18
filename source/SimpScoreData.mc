@@ -7,6 +7,7 @@ const STORAGE_AWAY = "awayScore";
 const STORAGE_ACTIONS = "actions";
 const STORAGE_WIN_AT = "winAt";
 const STORAGE_WIN_BY_2 = "winBy2";
+const STORAGE_COUNT_DOWN = "countDown";
 
 class SimpScoreData {
   enum Action {
@@ -18,8 +19,16 @@ class SimpScoreData {
   private var _winAt as Number? = 7;
 
   // When true, winning also requires a two-point lead; when false, first side
-  // to reach the win score wins.
+  // to reach the win score wins. Ignored entirely when _countDown is true
+  // (see checkWin()) — a shared lead has no meaning when each side counts
+  // down toward its own zero independently.
   private var _winBy2 as Boolean = true;
+
+  // When true, points subtract instead of add, both sides start a new game
+  // at _winAt (0 if Win Score is Off), and a side reaching 0 ends the game
+  // — e.g. Magic: the Gathering life totals or darts 301/501, as opposed to
+  // the default count-up-to-a-target mode.
+  private var _countDown as Boolean = false;
 
   private var _homeScore as Number;
   private var _awayScore as Number;
@@ -27,13 +36,22 @@ class SimpScoreData {
   private var _actions as Array<Action>;
 
   function initialize() {
-    self._homeScore = 0;
-    self._awayScore = 0;
+    self._homeScore = startingScore();
+    self._awayScore = startingScore();
     self._actions = [];
   }
 
   function reset() as Void {
     initialize();
+  }
+
+  // Both sides start here: _winAt in Count Down mode (0 if Win Score is
+  // Off), otherwise always 0. Safe to read _countDown/_winAt from
+  // initialize(): a hand-called reset() re-invokes this without re-running
+  // field initializers, so it sees whatever settings the user last set,
+  // same as _winAt/_winBy2 already relied on surviving reset().
+  private function startingScore() as Number {
+    return (_countDown && _winAt != null) ? (_winAt as Number) : 0;
   }
 
   // Persistence. Deliberately not called by this class's own mutators: only
@@ -54,6 +72,7 @@ class SimpScoreData {
     Storage.setValue(STORAGE_ACTIONS, _actions as Array<Storage.ValueType>);
     Storage.setValue(STORAGE_WIN_AT, _winAt == null ? 0 : _winAt);
     Storage.setValue(STORAGE_WIN_BY_2, _winBy2);
+    Storage.setValue(STORAGE_COUNT_DOWN, _countDown);
   }
 
   function restore() as Void {
@@ -81,6 +100,11 @@ class SimpScoreData {
     if (winBy2 instanceof Boolean) {
       _winBy2 = winBy2;
     }
+
+    var countDown = Storage.getValue(STORAGE_COUNT_DOWN);
+    if (countDown instanceof Boolean) {
+      _countDown = countDown;
+    }
   }
 
   function getWinAt() as Number? {
@@ -99,6 +123,14 @@ class SimpScoreData {
     self._winBy2 = winBy2;
   }
 
+  function getCountDown() as Boolean {
+    return self._countDown;
+  }
+
+  function setCountDown(countDown as Boolean) as Void {
+    self._countDown = countDown;
+  }
+
   function getHomeScore() as Number {
     return self._homeScore;
   }
@@ -115,7 +147,7 @@ class SimpScoreData {
       return false;
     }
 
-    self._homeScore += 1;
+    self._homeScore += (_countDown ? -1 : 1);
     self._actions.add(HOME_POINT);
     return true;
   }
@@ -125,21 +157,26 @@ class SimpScoreData {
       return false;
     }
 
-    self._awayScore += 1;
+    self._awayScore += (_countDown ? -1 : 1);
     self._actions.add(AWAY_POINT);
     return true;
   }
 
+  // The delta below reverses whatever direction addHomePoint()/
+  // addAwayPoint() logged the action with. Always consistent with a given
+  // action because toggling _countDown always resets the game (clears
+  // _actions) rather than changing direction mid-history.
   function undoLastAction() as Boolean {
     if (self._actions.size() == 0) {
       return false;
     }
 
+    var delta = _countDown ? 1 : -1;
     var lastAction = self._actions[_actions.size() - 1];
     if (lastAction == HOME_POINT) {
-      self._homeScore -= 1;
+      self._homeScore += delta;
     } else if (lastAction == AWAY_POINT) {
-      self._awayScore -= 1;
+      self._awayScore += delta;
     }
 
     _actions = _actions.slice(0, _actions.size() - 1);
@@ -150,6 +187,12 @@ class SimpScoreData {
     var winAt = self._winAt;
     if (winAt == null) {
       return false;
+    }
+
+    // Count Down: game ends the instant either side hits the floor. No
+    // shared lead to speak of, so _winBy2 is never consulted here.
+    if (_countDown) {
+      return _homeScore <= 0 || _awayScore <= 0;
     }
 
     if (_homeScore < winAt && _awayScore < winAt) {

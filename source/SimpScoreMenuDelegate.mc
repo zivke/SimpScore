@@ -6,12 +6,16 @@ import Toybox.WatchUi;
 // The options menu (Menu2, built in code):
 //
 //   New Game
-//   Win Score            <current value, or "Off">
-//   Win by 2             [toggle]
+//   Win Score / Start At <current value, or "Off">
+//   Win by 2             [toggle, hidden while Count Down is on]
+//   Count Down           [toggle]
 //
-// "Win Score" opens WinScoreView, a custom two-digit (tens, ones) entry
-// screen; 00 means "off". On confirm the value is written to the model and
-// the "Win Score" sub-label is refreshed in place.
+// "Win Score"/"Start At" opens WinScoreView, a custom two-digit (tens,
+// ones) entry screen; 00 means "off". On confirm the value is written to
+// the model and the sub-label is refreshed in place. Count Down flips
+// scoring direction (see SimpScoreData._countDown); Win by 2 has no meaning
+// there (no shared lead when each side counts down independently), so it's
+// omitted from the menu rather than left as a dead control.
 
 function menuString(id as ResourceId) as String {
   return WatchUi.loadResource(id) as String;
@@ -36,6 +40,12 @@ function centreTitles() as Boolean {
 // so the text sits just off the edge rather than flush against it.
 function titleInset() as Number {
   return System.getDeviceSettings().screenWidth * 6 / 100;
+}
+
+// "Win Score" reaches a target; "Start At" is the number a Count Down game
+// starts from and falls away from. Shared with WinScoreView's own title.
+function winScoreMenuLabel(countDown as Boolean) as String {
+  return menuString(countDown ? Rez.Strings.menu_start_at : Rez.Strings.menu_win_score);
 }
 
 function winScoreSubLabel(winAt as Number?) as String {
@@ -70,18 +80,29 @@ function buildMainMenu(data as SimpScoreData) as WatchUi.Menu2 {
   );
   menu.addItem(
     new WatchUi.MenuItem(
-      menuString(Rez.Strings.menu_win_score),
+      winScoreMenuLabel(data.getCountDown()),
       winScoreSubLabel(data.getWinAt()),
       :win_score,
       null
     )
   );
+  if (!data.getCountDown()) {
+    menu.addItem(
+      new WatchUi.ToggleMenuItem(
+        menuString(Rez.Strings.menu_win_by_2),
+        null,
+        :win_by_2,
+        data.getWinBy2(),
+        null
+      )
+    );
+  }
   menu.addItem(
     new WatchUi.ToggleMenuItem(
-      menuString(Rez.Strings.menu_win_by_2),
+      menuString(Rez.Strings.menu_count_down),
       null,
-      :win_by_2,
-      data.getWinBy2(),
+      :count_down,
+      data.getCountDown(),
       null
     )
   );
@@ -103,7 +124,7 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
       WatchUi.popView(WatchUi.SLIDE_DOWN);
       WatchUi.requestUpdate();
     } else if (id == :win_score) {
-      var view = new WinScoreView(_data.getWinAt());
+      var view = new WinScoreView(_data.getWinAt(), _data.getCountDown());
       WatchUi.pushView(
         view,
         new WinScoreDelegate(_data, view, item),
@@ -113,6 +134,14 @@ class SimpScoreMenuDelegate extends WatchUi.Menu2InputDelegate {
       _data.setWinBy2((item as WatchUi.ToggleMenuItem).isEnabled());
       // The rule change can win or un-win the current game; redraw the
       // score screen behind the menu so it reflects the new state.
+      WatchUi.requestUpdate();
+    } else if (id == :count_down) {
+      _data.setCountDown((item as WatchUi.ToggleMenuItem).isEnabled());
+      _data.reset();
+      // Unlike Win by 2, this always starts a fresh game and changes the
+      // Win Score/Start At item's title, which Menu2 can't relabel live —
+      // pop back to the score screen instead of leaving a stale menu open.
+      WatchUi.popView(WatchUi.SLIDE_DOWN);
       WatchUi.requestUpdate();
     }
   }

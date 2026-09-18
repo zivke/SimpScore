@@ -5,10 +5,12 @@
     <string id="label_home">HOME</string>
     <string id="label_away">AWAY</string>
 
-    <!-- Static caption above the win-score number on screens with no sub-screen
+    <!-- Caption above the win-score number on screens with no sub-screen
          (round, rectangle). The Instinct layout uses its sub-screen circle
-         instead and does not show this. -->
+         instead and does not show this. Swaps to label_start_at_target in
+         Count Down mode. -->
     <string id="label_win_target">WIN</string>
+    <string id="label_start_at_target">START</string>
 
     <!-- Options-menu title. Deliberately not the app name: "SimpScore" wraps
          to two lines on the narrower semi-octagon screens (instinct2 and
@@ -17,8 +19,15 @@
 
     <string id="menu_new_game">New Game</string>
     <string id="menu_win_score">Win Score</string>
+    <!-- "Win Score" reworded for Count Down mode: a number you start at and
+         fall away from, not one you reach. -->
+    <string id="menu_start_at">Start At</string>
     <string id="menu_win_score_off">Off</string>
     <string id="menu_win_by_2">Win by 2</string>
+    <!-- Toggle: points subtract instead of add, both sides start at the win
+         score and a side reaching 0 ends the game (e.g. Magic: the
+         Gathering life totals, darts 301/501). Hides Win by 2 while on. -->
+    <string id="menu_count_down">Count Down</string>
 
     <!-- Shown in the target circle on the score screen when no win score is set. -->
     <string id="win_score_off_indicator">-</string>

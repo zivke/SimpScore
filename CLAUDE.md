@@ -12,6 +12,10 @@ two sides, **home** and **away**, for sports or simple games:
   wins, and off lets play continue indefinitely
 - a toggleable "win by 2" rule (default on): winning also requires a two-point
   lead. When off, first to the win score wins
+- a toggleable "Count Down" mode: points subtract instead of add, both sides
+  start at the win score (relabeled "Start At"), and a side reaching 0 ends
+  the game — e.g. Magic: the Gathering life totals, darts 301/501. Hides and
+  ignores "win by 2" while on, since there's no shared lead to speak of
 - time of day shown on the score screen
 - new-game / reset
 - a single score screen plus an options menu
@@ -50,15 +54,27 @@ below).
 
 - **`source/SimpScoreData.mc`** — the model, no UI. Holds `_homeScore`,
   `_awayScore`, `_winAt` (`Number?`, default 7; `null` = no win score),
-  `_winBy2` (`Boolean`, default true) and `_actions`, an `Array<Action>` of
-  `HOME_POINT` / `AWAY_POINT` that `undoLastAction()` pops. `checkWin()` is
-  false when `_winAt` is `null`; otherwise a side must reach `_winAt`, plus —
-  when `_winBy2` — lead by more than one point. `addHomePoint` / `addAwayPoint`
-  become no-ops after a win. The three mutators (`addHomePoint`, `addAwayPoint`,
-  `undoLastAction`) return a `Boolean` — whether they actually changed anything
-  — so `SimpScoreDelegate` can skip a redundant win-buzz check on a no-op
-  press. `reset()` re-runs `initialize()` (which leaves the settings alone).
-  `persist()` / `restore()` move all five fields to/from
+  `_winBy2` (`Boolean`, default true), `_countDown` (`Boolean`, default
+  false) and `_actions`, an `Array<Action>` of `HOME_POINT` / `AWAY_POINT`
+  that `undoLastAction()` pops. `checkWin()` is false when `_winAt` is
+  `null`; when `_countDown`, it's true the instant either side is `<= 0`
+  (`_winBy2` is never consulted there — no shared lead when each side counts
+  down independently); otherwise a side must reach `_winAt`, plus — when
+  `_winBy2` — lead by more than one point. `addHomePoint` / `addAwayPoint`
+  add 1, or subtract 1 when `_countDown`, and become no-ops after a win (so
+  a countdown score can never go below 0: the guard only allows a press when
+  no side is at `<= 0` yet, and each press moves a score by exactly 1).
+  `undoLastAction()` reverses whichever direction was used. The three
+  mutators (`addHomePoint`, `addAwayPoint`, `undoLastAction`) return a
+  `Boolean` — whether they actually changed anything — so `SimpScoreDelegate`
+  can skip a redundant win-buzz check on a no-op press. `reset()` re-runs
+  `initialize()` (which leaves the settings alone), which starts both scores
+  at `_winAt` when `_countDown` (0 if Win Score is Off), otherwise always 0.
+  Toggling `_countDown`, or changing `_winAt` while it's already on, always
+  calls `reset()` (see `SimpScoreMenuDelegate.mc` / `WinScoreDelegate.mc`
+  below) rather than trying to transform an in-progress score, which also
+  keeps `_actions` from ever mixing add-direction and subtract-direction
+  entries. `persist()` / `restore()` move all six fields to/from
   `Application.Storage` (win score as `0` = off); `persist()` is called
   **only** from `SimpScoreApp.onStop`, not after individual points, undos, or
   menu changes — a real device's flash write is slow enough to show up as
@@ -79,23 +95,31 @@ below).
   persist (see `SimpScoreData.persist()`); calls `Attention.vibrate` when a
   point wins.
 - **`source/SimpScoreMenuDelegate.mc`** — the options menu (`Menu2`, built in
-  code): "New Game", "Win Score" (sub-label = value or "Off"), and a "Win by 2"
-  `ToggleMenuItem`. The title is a plain string on every shape, including
-  Instinct — a custom left-inset `Text` drawable was tried there to clear
-  the sub-screen, but a real Instinct 2 showed it overlapping the sub-screen
-  anyway (the same class of bug `c09f72d` had already hit and reverted for
-  round/rectangular's `HALIGN_CENTER` title, and the simulator didn't catch
-  either time); letting the system position the title is what actually holds
-  up on hardware. `buildMainMenu` omits `:icon` on devices with a physical
-  sub-screen (`hasSubscreen()`, `has`-guarded — `WatchUi.getSubscreen()` is
-  API 3.2.7 vs. this app's 3.2.0 minimum): a real Instinct 2 showed the
+  code): "New Game", "Win Score"/"Start At" (sub-label = value or "Off", title
+  keyed off `_countDown` via `winScoreMenuLabel`), a "Win by 2"
+  `ToggleMenuItem` — omitted from the menu entirely while Count Down is on,
+  since it has no effect there (see `SimpScoreData.mc`) — and a "Count Down"
+  `ToggleMenuItem` last. The title is a plain string on every shape,
+  including Instinct — a custom left-inset `Text` drawable was tried there to
+  clear the sub-screen, but a real Instinct 2 showed it overlapping the
+  sub-screen anyway (the same class of bug `c09f72d` had already hit and
+  reverted for round/rectangular's `HALIGN_CENTER` title, and the simulator
+  didn't catch either time); letting the system position the title is what
+  actually holds up on hardware. `buildMainMenu` omits `:icon` on devices with
+  a physical sub-screen (`hasSubscreen()`, `has`-guarded — `WatchUi.getSubscreen()`
+  is API 3.2.7 vs. this app's 3.2.0 minimum): a real Instinct 2 showed the
   launcher icon glitching on that hardware, since `:icon` is only used (and
-  rendered on the sub-screen itself) on such devices. Selecting "Win Score"
-  pushes `WinScoreView` / `WinScoreDelegate`; on confirm the pushed delegate
-  writes the value back and the sub-label is updated in place. `centreTitles`
-  / `titleInset` are now only used by `WinScoreView`'s own title placement.
-  `menuString` / `winScoreSubLabel` / `hasSubscreen` / `buildMainMenu` are
-  file-scope helpers.
+  rendered on the sub-screen itself) on such devices. Selecting "Win Score"/
+  "Start At" pushes `WinScoreView` / `WinScoreDelegate`; on confirm the pushed
+  delegate writes the value back (resetting the game first if `_countDown`)
+  and the sub-label is updated in place. Toggling "Count Down" calls
+  `setCountDown` + `reset()` and pops back to the score screen — unlike "Win
+  by 2", which redraws in place and leaves the menu open — because it always
+  starts a fresh game and changes the Win Score/Start At item's *title*,
+  which `Menu2` has no live way to relabel short of rebuilding the menu.
+  `centreTitles` / `titleInset` are now only used by `WinScoreView`'s own
+  title placement. `menuString` / `winScoreMenuLabel` / `winScoreSubLabel` /
+  `hasSubscreen` / `buildMainMenu` are file-scope helpers.
 - **`source/WinScoreView.mc`** / **`source/WinScoreDelegate.mc`** — the win-score
   entry screen: a plain `WatchUi.View` (not a `WatchUi.Picker` subclass — an
   earlier attempt overrode `Picker.onUpdate` to draw black-on-white and fought
@@ -113,12 +137,20 @@ below).
   a plain function so the delegate can hit-test the same rectangle without a
   `Dc`); `WinScoreDelegate.onTap` treats a tap inside it exactly like select.
   `winScoreValue` (`tens*10 + ones`, `0` → `null`) and `wrapDigit` are
-  file-scope helpers, kept WatchUi-free so `source-test` can reach them.
+  file-scope helpers, kept WatchUi-free so `source-test` can reach them. The
+  title text itself comes from `winScoreMenuLabel(_countDown)`
+  (`SimpScoreMenuDelegate.mc`), a constructor parameter passed in alongside
+  the current win score, so it reads "Win Score" or "Start At" to match the
+  mode. `WinScoreDelegate.confirm()` resets the game (see `SimpScoreData.mc`)
+  when `_countDown` is on, since the number just entered is a new starting
+  point, not a target.
 - **`source/SimpScoreView.mc`** — `onLayout` loads `Rez.Layouts.MainLayout`;
   `onUpdate` writes the scores into `HomeScoreValueLabel` /
   `AwayScoreValueLabel`, the win score (or `win_score_off_indicator` when
-  `null`) into `ScoreToWinValueLabel`, and `hh:mm` (12/24h per device setting)
-  into `ClockLabel`. A 20-second `Timer` started in `onShow` / stopped in
+  `null`) into `ScoreToWinValueLabel`, `hh:mm` (12/24h per device setting)
+  into `ClockLabel`, and — on layouts that have it (round, rectangle; the
+  lookup is a no-op elsewhere) — "WIN" or "START" into `WinScoreTextLabel`
+  depending on `_countDown`. A 20-second `Timer` started in `onShow` / stopped in
   `onHide` keeps the clock current; `onShow` also enables the action menu
   indicator (see `SimpScoreDelegate.mc` above).
 

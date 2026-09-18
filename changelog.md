@@ -6,6 +6,16 @@ follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- "Count Down" option (options menu, hidden while off): points subtract
+  instead of add, both sides start a new game at the Win Score number
+  (relabeled "Start At" while this is on), and the game ends the instant
+  either side reaches 0 — for games like Magic: the Gathering life totals or
+  darts 301/501. "Win by 2" has no meaning here (no shared lead when each
+  side counts down independently), so it's hidden from the menu and ignored
+  while Count Down is on. Turning Count Down on/off, or changing the
+  starting number while it's on, always starts a fresh game.
+
 ## [1.0.0] - 2026-09-15
 
 ### Added

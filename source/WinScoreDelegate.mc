@@ -73,6 +73,13 @@ class WinScoreDelegate extends WatchUi.BehaviorDelegate {
 
   private function confirm() as Void {
     _data.setWinAt(winScoreValue(_view.getTens(), _view.getOnes()));
+    // Count Down: the starting number just changed, so the in-progress
+    // game (which already started at the old number) is stale — reset it.
+    // Count-up mode leaves the current score alone, as before: the target
+    // can move without disturbing an accumulated score.
+    if (_data.getCountDown()) {
+      _data.reset();
+    }
     _winScoreItem.setSubLabel(winScoreSubLabel(_data.getWinAt()));
     WatchUi.popView(WatchUi.SLIDE_DOWN);
     WatchUi.requestUpdate();

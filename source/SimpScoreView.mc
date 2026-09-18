@@ -54,6 +54,16 @@ class SimpScoreView extends WatchUi.View {
       clockLabel.setText(currentTimeText());
     }
 
+    // "WIN"/"START" caption above the win-score number, on layouts that have
+    // it (round, rectangle — semi-octagon uses the physical sub-screen
+    // circle instead and has no such label, so the lookup is null there).
+    var winScoreTextLabel = View.findDrawableById("WinScoreTextLabel") as Text?;
+    if (winScoreTextLabel != null) {
+      winScoreTextLabel.setText(WatchUi.loadResource(
+        _data.getCountDown() ? Rez.Strings.label_start_at_target : Rez.Strings.label_win_target
+      ) as String);
+    }
+
     // Set the score to win value
     var scoreToWinValueLabel =
       View.findDrawableById("ScoreToWinValueLabel") as Text?;
