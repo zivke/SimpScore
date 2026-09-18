@@ -6,6 +6,8 @@ follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-18
+
 ### Added
 - "Count Down" option (options menu, hidden while off): points subtract
   instead of add, both sides start a new game at the Win Score number
