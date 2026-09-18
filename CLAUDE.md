@@ -14,8 +14,8 @@ two sides, **home** and **away**, for sports or simple games:
   lead. When off, first to the win score wins
 - a toggleable "Count Down" mode: points subtract instead of add, both sides
   start at the win score (relabeled "Start At"), and a side reaching 0 ends
-  the game — e.g. Magic: the Gathering life totals, darts 301/501. Hides and
-  ignores "win by 2" while on, since there's no shared lead to speak of
+  the game — e.g. Magic: the Gathering life totals. Hides and ignores
+  "win by 2" while on, since there's no shared lead to speak of
 - time of day shown on the score screen
 - new-game / reset
 - a single score screen plus an options menu

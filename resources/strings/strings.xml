@@ -26,7 +26,7 @@
     <string id="menu_win_by_2">Win by 2</string>
     <!-- Toggle: points subtract instead of add, both sides start at the win
          score and a side reaching 0 ends the game (e.g. Magic: the
-         Gathering life totals, darts 301/501). Hides Win by 2 while on. -->
+         Gathering life totals). Hides Win by 2 while on. -->
     <string id="menu_count_down">Count Down</string>
 
     <!-- Shown in the target circle on the score screen when no win score is set. -->

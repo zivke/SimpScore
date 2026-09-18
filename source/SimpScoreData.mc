@@ -26,8 +26,8 @@ class SimpScoreData {
 
   // When true, points subtract instead of add, both sides start a new game
   // at _winAt (0 if Win Score is Off), and a side reaching 0 ends the game
-  // — e.g. Magic: the Gathering life totals or darts 301/501, as opposed to
-  // the default count-up-to-a-target mode.
+  // — e.g. Magic: the Gathering life totals — as opposed to the default
+  // count-up-to-a-target mode.
   private var _countDown as Boolean = false;
 
   private var _homeScore as Number;

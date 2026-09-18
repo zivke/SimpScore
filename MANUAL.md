@@ -78,8 +78,7 @@ Has no effect while the win score is Off.
 ### Count Down
 
 A toggle (default off), last in the menu. Games like Magic: the Gathering
-(life totals) or darts (301/501) count *down* to zero instead of up to a
-target:
+(life totals) count *down* to zero instead of up to a target:
 
 - **On**: UP/DOWN subtract instead of add. Both sides start a new game at the
   Start At number (0 if it's Off), and the game ends the instant either side
