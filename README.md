@@ -78,3 +78,7 @@ a new screen *shape* also needs a `resources-<shape>/layouts/layout.xml`.
 ## License
 
 [0BSD](LICENSE) — do anything, no attribution required, no warranty.
+
+## Donations
+
+[DONATE NOW!](https://github.com/zivke/.github/blob/main/DONATE.md)
